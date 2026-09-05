@@ -38,6 +38,8 @@ class IntradayConfirmation:
     timeframe: str  # "1H" или "4H"
     available: bool
     note: str
+    direction: str | None = None  # Direction.value внутридневной структуры, None если available=False --
+    # добавлено 5 сентября для analyst_agent.py (сверка направления с дневной структурой)
 
 
 def _check_one_timeframe(symbol: str, interval: str, current_price: float, exchange_hint: str) -> IntradayConfirmation:
@@ -68,7 +70,20 @@ def _check_one_timeframe(symbol: str, interval: str, current_price: float, excha
             f"{timeframe_label} ({structure.direction.value}, "
             f"{structure.point1.dt:%d.%m %H:%M}..{structure.point2.dt:%d.%m %H:%M}): {detail}"
         ),
+        direction=structure.direction.value,
     )
+
+
+def get_intraday_confirmations(
+    symbol: str, current_price: float, exchange_hint: str = "NASDAQ/NYSE (US)"
+) -> list[IntradayConfirmation]:
+    """Сырые 1H/4H проверки (см. IntradayConfirmation) -- вынесено отдельно
+    от build_intraday_note() 5 сентября для analyst_agent.py, которому
+    нужно направление структуры на каждом ТФ, а не только готовая строка."""
+    return [
+        _check_one_timeframe(symbol, "1hour", current_price, exchange_hint),
+        _check_one_timeframe(symbol, "4hour", current_price, exchange_hint),
+    ]
 
 
 def build_intraday_note(symbol: str, current_price: float, exchange_hint: str = "NASDAQ/NYSE (US)") -> str | None:
@@ -79,10 +94,7 @@ def build_intraday_note(symbol: str, current_price: float, exchange_hint: str = 
     показываем пустую заглушку (та же дисциплина, что и у
     weekly_extreme_crosscheck в binance-fib-bot, 31 августа).
     """
-    results = [
-        _check_one_timeframe(symbol, "1hour", current_price, exchange_hint),
-        _check_one_timeframe(symbol, "4hour", current_price, exchange_hint),
-    ]
+    results = get_intraday_confirmations(symbol, current_price, exchange_hint)
     if not any(r.available for r in results):
         return None
     parts = [r.note for r in results]

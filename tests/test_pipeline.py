@@ -17,6 +17,18 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
+from agents.analyst_agent import (
+    CALL_BUY,
+    CALL_INVALIDATED,
+    CALL_NO_ANALYSIS,
+    CALL_SELL,
+    CALL_WAIT,
+    CONFIDENCE_CERTAIN,
+    CONFIDENCE_GUESS,
+    CONFIDENCE_LIKELY,
+    build_verdict,
+    format_verdict,
+)
 from agents.chart_agent import LEVEL_COLORS, render_chart
 from agents.context_agent import MacroEvent, build_context_note, filter_tracked_events, get_upcoming_macro_events
 from agents.data_agent import Candle, CandleSeries, load_ibm_demo_daily
@@ -30,6 +42,7 @@ from agents.dispatch_agent import (
     send_photo_via_telegram,
     should_send_level_watch,
 )
+from agents.intraday_agent import IntradayConfirmation
 from agents.fibo_agent import (
     Direction,
     FiboLevel,
@@ -1026,6 +1039,73 @@ def test_summarize_handles_all_insufficient_data():
     assert summary.n_scored == 0, summary
     assert summary.win_rate is None and summary.avg_r is None, summary
     print("OK  test_summarize_handles_all_insufficient_data")
+
+
+def test_build_verdict_no_analysis_when_checklist_fails():
+    bundle = _mk_bundle(fraction=0.7, checklist_ok=False)
+    v = build_verdict(bundle)
+    assert v.call == CALL_NO_ANALYSIS, v
+    assert v.confidence == CONFIDENCE_CERTAIN, v  # единственный случай, где уверенность абсолютная
+    print("OK  test_build_verdict_no_analysis_when_checklist_fails")
+
+
+def test_build_verdict_waits_below_watch_threshold():
+    bundle = _mk_bundle(fraction=0.4)  # ниже 0.618
+    v = build_verdict(bundle)
+    assert v.call == CALL_WAIT, v
+    assert v.retracement_pct is not None and abs(v.retracement_pct - 40.0) < 1e-6, v
+    print("OK  test_build_verdict_waits_below_watch_threshold")
+
+
+def test_build_verdict_invalidated_beyond_point1():
+    bundle = _mk_bundle(fraction=1.05)  # цена прошла точку 1
+    v = build_verdict(bundle)
+    assert v.call == CALL_INVALIDATED, v
+    print("OK  test_build_verdict_invalidated_beyond_point1")
+
+
+def test_build_verdict_sell_call_for_descending_structure_in_watch_zone():
+    # _mk_bundle строит DESCENDING структуру (точка 1 = HIGH) -- продолжение
+    # нисходящего движения это ПРОДАЖА, не ПОКУПКА.
+    bundle = _mk_bundle(fraction=0.7)
+    v = build_verdict(bundle)
+    assert v.call == CALL_SELL, v
+    assert v.confidence == CONFIDENCE_GUESS, v  # без подтверждений -- низкая уверенность
+    assert any("Бэктест" in c for c in v.caveats), v  # честное предупреждение всегда присутствует
+    print("OK  test_build_verdict_sell_call_for_descending_structure_in_watch_zone")
+
+
+def test_build_verdict_confidence_rises_with_aligned_confirmations():
+    bundle = _mk_bundle(fraction=0.7)
+    intraday = [
+        IntradayConfirmation(timeframe="1H", available=True, note="1H", direction="нисходящий"),
+        IntradayConfirmation(timeframe="4H", available=True, note="4H", direction="нисходящий"),
+    ]
+    v = build_verdict(bundle, consensus_agree=True, intraday_confirmations=intraday)
+    assert v.call == CALL_SELL, v
+    assert v.confidence == CONFIDENCE_LIKELY, v
+    print("OK  test_build_verdict_confidence_rises_with_aligned_confirmations")
+
+
+def test_build_verdict_waits_when_conflicts_outweigh_confirmations():
+    bundle = _mk_bundle(fraction=0.7)
+    intraday = [
+        IntradayConfirmation(timeframe="1H", available=True, note="1H", direction="восходящий"),  # конфликт
+    ]
+    v = build_verdict(bundle, consensus_agree=False, consensus_detail="разное направление", intraday_confirmations=intraday)
+    assert v.call == CALL_WAIT, v
+    assert any("НЕ согласна" in c for c in v.caveats), v
+    print("OK  test_build_verdict_waits_when_conflicts_outweigh_confirmations")
+
+
+def test_format_verdict_contains_call_and_confidence():
+    bundle = _mk_bundle(fraction=0.7)
+    v = build_verdict(bundle)
+    text = format_verdict(v, symbol="TEST")
+    assert v.call in text, text
+    assert v.confidence in text, text
+    assert "TEST" in text, text
+    print("OK  test_format_verdict_contains_call_and_confidence")
 
 
 if __name__ == "__main__":
