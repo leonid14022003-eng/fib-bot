@@ -26,6 +26,14 @@ run_screener.sh, should_send_level_watch()) -- полностью отдельн
 требует ДВОЙНОГО явного согласия -- TELEGRAM_BOT_TOKEN в окружении И
 ANALYST_REPORT_SEND_REAL=1 -- чтобы случайный `source .env` без намерения
 слать не разослал реальный отчёт всем троим (см. CLAUDE.md, "Никогда").
+
+ANALYST_REPORT_INCLUDE_INTRADAY=0 -- отключает 1H/4H проверку (см.
+intraday_agent.py) для ВСЕХ инструментов сразу: экономит ~2 запроса к FMP
+на инструмент (~30 запросов на полный прогон по 15 инструментам). По
+умолчанию включено ("1" или переменная не задана); cron-обёртка
+(run_analyst_report.sh) выставляет "0" -- решение Леонида 5 сентября 2026,
+часовой автоматический прогон дешевле по лимиту FMP, ручной запуск видит
+полную картину.
 """
 from __future__ import annotations
 
@@ -49,6 +57,13 @@ ROOT = Path(__file__).resolve().parent
 # ботом (см. CLAUDE.md, таблица "Что / Как часто").
 IBM = Instrument("IBM", "IBM", "NASDAQ/NYSE (US)")
 ALL_INSTRUMENTS: list[Instrument] = [IBM] + list(INSTRUMENTS)
+
+# По умолчанию включено (полный анализ). Cron-обёртка (run_analyst_report.sh)
+# выставляет "0" -- 5 сентября 2026, по решению Леонида: часовой прогон по
+# всем 15 инструментам без внутридневных проверок примерно вдвое дешевле по
+# лимиту FMP (не тратит 2 дополнительных запроса на инструмент), а
+# ручной/разовый запуск (без этой переменной) по-прежнему видит полную картину.
+INCLUDE_INTRADAY = os.environ.get("ANALYST_REPORT_INCLUDE_INTRADAY", "1") != "0"
 
 
 def analyze_instrument(instrument: Instrument, include_intraday: bool = True) -> dict:
@@ -152,7 +167,11 @@ def main() -> None:
     print(f"ANALYST REPORT -- {len(ALL_INSTRUMENTS)} инструментов (IBM + скринер)")
     print("=" * 70)
 
-    results = [analyze_instrument(instrument) for instrument in ALL_INSTRUMENTS]
+    if not INCLUDE_INTRADAY:
+        print("(ANALYST_REPORT_INCLUDE_INTRADAY=0 -- внутридневное подтверждение пропущено, экономим лимит FMP)")
+    results = [
+        analyze_instrument(instrument, include_intraday=INCLUDE_INTRADAY) for instrument in ALL_INSTRUMENTS
+    ]
 
     for r in results:
         inst = r["instrument"]
