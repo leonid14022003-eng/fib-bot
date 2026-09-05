@@ -1,0 +1,11 @@
+.env
+__pycache__/
+*.pyc
+
+# Runtime artefacts -- регенерируются при каждом запуске, не исходники
+output/*.log
+output/screener_state.json
+output/alert_state.json
+
+# Ручной снапшот от 28 августа -- не часть исходников проекта
+backup_28aug/

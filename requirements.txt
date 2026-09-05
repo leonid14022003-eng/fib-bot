@@ -1,4 +1,13 @@
-# Нужно только на VPS для реального запуска (load_fmp_daily + отправка в Telegram).
-# Для локальных тестов (tests/test_pipeline.py, orchestrator.py на демо-данных)
-# внешние пакеты не нужны -- используются только встроенные модули Python.
+# requests -- нужен только на VPS для реального запуска (load_fmp_daily,
+# отправка в Telegram, и с 26 августа -- agents/context_agent.py, календарь
+# FMP). Для локальных тестов и orchestrator.py на демо-данных без LIVE не
+# нужен -- используются встроенные модули Python.
 requests>=2.31
+
+# matplotlib -- рендер PNG-графиков (agents/chart_agent.py, 26 августа:
+# "сделаем так чтобы бот присылал графики"). В отличие от requests, нужен
+# ВЕЗДЕ, включая офлайн-тесты (tests/test_pipeline.py импортирует
+# agents.chart_agent) -- значит, на VPS перед деплоем этой фичи обязателен
+# `pip3 install matplotlib --break-system-packages` (или -r requirements.txt
+# целиком), иначе даже тесты не запустятся, не то что реальная отправка.
+matplotlib>=3.8

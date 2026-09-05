@@ -127,8 +127,158 @@ def find_global_extremes(series: CandleSeries) -> tuple[SwingPoint, SwingPoint]:
     )
 
 
-def build_global_fibo(series: CandleSeries) -> FiboStructure:
-    hi, lo = find_global_extremes(series)
+def find_fractal_swing_extremes(series: CandleSeries, window: int = MIN_LEFT_BARS) -> tuple[SwingPoint, SwingPoint]:
+    """
+    Альтернативный, НЕЗАВИСИМЫЙ способ найти глобальные HIGH/LOW -- не для
+    замены find_global_extremes(), а для реальной сверки с ним (Verification
+    Agent, 27 августа, по прямому запросу Леонида: "настоящая сверка
+    структур", а не повтор одного и того же прогона на тех же данных, как
+    было раньше -- см. verification_agent.py и orchestrator.py).
+
+    find_global_extremes() берёт буквальный максимум/минимум всего окна,
+    подтверждённый СЧЁТОМ баров слева (минимум 5 из ЛЮБОГО числа слева
+    должны быть ниже/выше, раздел 8-9 регламента). Этот метод -- другой,
+    классический алгоритм разворотных точек ("фрактал"/swing point): свеча
+    считается подтверждённым свинг-хаем/лоу, только если она СТРОГО выше/ниже
+    ВСЕХ `window` баров И СЛЕВА, И СПРАВА одновременно -- симметричное
+    подтверждение с обеих сторон, а не счётное правило по одной стороне.
+    Среди всех точек, подтверждённых этим способом, берётся самая крайняя.
+
+    Из-за требования подтверждения СПРАВА последние `window` баров окна
+    никогда не могут стать подтверждённой точкой этим методом -- это не
+    ограничение по недосмотру, а честное и ожидаемое свойство классических
+    фрактальных индикаторов (разворот виден только спустя `window` баров
+    ПОСЛЕ него). find_global_extremes(), для сравнения, подтверждается
+    только барами слева -- поэтому свежий, ещё не устоявшийся экстремум он
+    может принять, а этот метод -- нет. Именно в этом и ценность сверки:
+    если два метода расходятся, велика вероятность, что буквальный
+    глобальный максимум/минимум -- это свежий, ещё не подтверждённый выброс,
+    а не настоящая структурная точка разворота.
+
+    Бросает ValueError, если не нашлось ни одной подтверждённой с обеих
+    сторон точки (окно слишком короткое или слишком "гладкое", без явных
+    разворотов) -- вызывающий код обязан это поймать и честно показать
+    "сверка недоступна в этом прогоне", а не подставлять примерное значение
+    (регламент, раздел 2).
+    """
+    candles = series.candles
+    n = len(candles)
+    confirmed_high_idx: list[int] = []
+    confirmed_low_idx: list[int] = []
+
+    for i in range(n):
+        left = candles[max(0, i - window):i]
+        right = candles[i + 1:i + 1 + window]
+        if len(left) < window or len(right) < window:
+            continue  # у самого края окна (особенно справа) фрактал не может подтвердиться
+        target = candles[i]
+        if all(c.high < target.high for c in left) and all(c.high < target.high for c in right):
+            confirmed_high_idx.append(i)
+        if all(c.low > target.low for c in left) and all(c.low > target.low for c in right):
+            confirmed_low_idx.append(i)
+
+    if not confirmed_high_idx or not confirmed_low_idx:
+        raise ValueError(
+            f"Не нашлось ни одной фрактальной точки разворота, подтверждённой с "
+            f"обеих сторон (window={window}) в окне из {n} свечей -- независимая "
+            f"сверка недоступна для этого прогона."
+        )
+
+    hi_idx = max(confirmed_high_idx, key=lambda i: candles[i].high)
+    lo_idx = min(confirmed_low_idx, key=lambda i: candles[i].low)
+    hi, lo = candles[hi_idx], candles[lo_idx]
+    return (
+        SwingPoint(dt=hi.dt, price=hi.high, kind="HIGH", index=hi_idx),
+        SwingPoint(dt=lo.dt, price=lo.low, kind="LOW", index=lo_idx),
+    )
+
+
+def _is_unbroken_high(candles: list[Candle], idx: int) -> bool:
+    """True, если ни одна свеча ПОСЛЕ idx не дала high выше candles[idx]."""
+    target = candles[idx].high
+    return all(c.high <= target for c in candles[idx + 1:])
+
+
+def _is_unbroken_low(candles: list[Candle], idx: int) -> bool:
+    """True, если ни одна свеча ПОСЛЕ idx не дала low ниже candles[idx]."""
+    target = candles[idx].low
+    return all(c.low >= target for c in candles[idx + 1:])
+
+
+def find_oldest_unbroken_extremes(series: CandleSeries) -> tuple[SwingPoint, SwingPoint]:
+    """
+    Реализация правила «самый старый непробитый экстремум» (уточнение
+    Леонида от 28 августа 2026, см. claude/fibonacci-reglament.md, раздел 7.1,
+    и claude/brief.md). Заменяет идею фиксированного окна/количества баров на
+    таймфрейм -- вместо этого ищет по свечам от старых к новым, пока не
+    найдётся подтверждённый (правило раздела 8-9, минимум MIN_LEFT_BARS
+    свечей слева) HIGH или LOW, который цена НИ РАЗУ не пробила вплоть до
+    последней свечи в series. Если непробитых кандидатов несколько на разном
+    удалении в прошлое -- побеждает самый старый (первый найденный при
+    проходе от начала списка), а не самый свежий и не самый крупный.
+
+    Пример, из-за которого появилось это правило: Pavel вручную построил ФИБО
+    по Meta от ~годового хая 796,25, а не от хая, который бот нашёл в узком
+    6-месячном окне -- бот физически не мог увидеть более старый хай, потому
+    что тот был за пределами переданного окна. Это правило решает проблему на
+    уровне выбора точек, а не размера окна: вызывающий код (data_agent.py)
+    должен передавать достаточно длинную историю (см. months_back), а эта
+    функция сама найдёт внутри неё правильную, давно не тронутую точку.
+
+    Ожидает series.candles в хронологическом порядке (старые -> новые), как и
+    везде в проекте. Бросает ValueError, а не выдуманную точку (раздел 2/25
+    регламента), если внутри переданных свечей вообще нет ни одного
+    подтверждённого и ни разу не пробитого HIGH или LOW -- это значит, что
+    нужно расширить окно данных (в пределах согласованного потолка 5 лет) или
+    уточнить диапазон у пользователя вручную.
+    """
+    candles = series.candles
+
+    hi_idx = None
+    for i in range(len(candles)):
+        if _confirmed_left(candles, i, "HIGH") and _is_unbroken_high(candles, i):
+            hi_idx = i
+            break
+
+    lo_idx = None
+    for i in range(len(candles)):
+        if _confirmed_left(candles, i, "LOW") and _is_unbroken_low(candles, i):
+            lo_idx = i
+            break
+
+    if hi_idx is None:
+        raise ValueError(
+            "Не найден ни один подтверждённый HIGH, который цена ни разу не "
+            f"пробила бы за весь переданный период ({len(candles)} свечей) -- "
+            "нужно расширить окно данных (в пределах потолка 5 лет) или "
+            "уточнить у пользователя диапазон вручную (раздел 5/25 регламента)."
+        )
+    if lo_idx is None:
+        raise ValueError(
+            "Не найден ни один подтверждённый LOW, который цена ни разу не "
+            f"пробила бы за весь переданный период ({len(candles)} свечей) -- "
+            "нужно расширить окно данных (в пределах потолка 5 лет) или "
+            "уточнить у пользователя диапазон вручную (раздел 5/25 регламента)."
+        )
+
+    hi = candles[hi_idx]
+    lo = candles[lo_idx]
+    return (
+        SwingPoint(dt=hi.dt, price=hi.high, kind="HIGH", index=hi_idx),
+        SwingPoint(dt=lo.dt, price=lo.low, kind="LOW", index=lo_idx),
+    )
+
+
+def build_global_fibo(series: CandleSeries, extremes_fn=find_global_extremes) -> FiboStructure:
+    """
+    extremes_fn -- по умолчанию find_global_extremes() (буквальный метод
+    регламента, разделы 7-9), НЕ изменилось для существующих вызовов.
+    Передайте extremes_fn=find_fractal_swing_extremes для независимой
+    сверки (см. verification_agent.py / orchestrator.py / screener.py,
+    27 августа) -- та же функция строит структуру и уровни, меняется
+    только способ поиска точек 1/2.
+    """
+    hi, lo = extremes_fn(series)
 
     # Направление -- по хронологии (см. Задача №1 в brief.md: "по их хронологии
     # определяется направление тренда"). Раздел 7 регламента не даёт более
