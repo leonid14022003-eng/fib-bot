@@ -40,7 +40,7 @@ from __future__ import annotations
 import os
 from pathlib import Path
 
-from agents.analyst_agent import BACKTEST_CAVEAT, analyze_series, format_verdict
+from agents.analyst_agent import BACKTEST_CAVEAT, CALL_BUY, CALL_SELL, analyze_series, format_verdict
 from agents.data_agent import load_fmp_daily
 from agents.dispatch_agent import Recipient, _strip_html, send_document_via_telegram
 from agents.intraday_agent import get_intraday_confirmations
@@ -137,6 +137,39 @@ def build_digest(results: list[dict]) -> str:
     return "\n".join(lines)
 
 
+def filter_actionable(results: list[dict]) -> list[dict]:
+    """Только ПОКУПКА/ПРОДАЖА -- по прямому запросу Леонида, 5 сентября
+    2026 ("присылай только покупку или продажу"): ЖДАТЬ/ИНВАЛИДИРОВАНО/
+    НЕТ АНАЛИЗА по 15 инструментам -- по факту почти всегда шум (ни один
+    инструмент не в зоне 0.618+ большую часть времени), а не сигнал.
+    Полная картина по всем 15 (включая ЖДАТЬ) по-прежнему пишется в
+    output/last_analyst_report.txt локально (build_digest()) -- не в
+    Telegram, только на сервере для отладки."""
+    return [r for r in results if r["status"] == "OK" and r["verdict"].call in (CALL_BUY, CALL_SELL)]
+
+
+def build_actionable_report(actionable: list[dict]) -> str:
+    """ПРОСТОЙ текст (без HTML-тегов, как и opportunity_scanner.build_opportunity_report)
+    только с карточками ПОКУПКА/ПРОДАЖА -- это уходит в Telegram одним
+    документом, если actionable непусто. BACKTEST_CAVEAT один раз в шапке
+    (та же дисциплина, что и в build_digest()/build_opportunity_report --
+    не повторять на каждой карточке)."""
+    header = f"Актуальные сигналы (ПОКУПКА/ПРОДАЖА) -- {len(actionable)}\n{'=' * 60}\n{BACKTEST_CAVEAT}\n"
+    divider = "\n" + "-" * 40 + "\n"
+    cards = [
+        _strip_html(
+            format_verdict(
+                r["verdict"],
+                symbol=r["instrument"].symbol,
+                display_name=r["instrument"].label,
+                source_tag=r["bundle"].source_tag,
+            )
+        )
+        for r in actionable
+    ]
+    return header + divider.join(cards)
+
+
 def main() -> None:
     print("=" * 70)
     print(f"ANALYST REPORT -- {len(ALL_INSTRUMENTS)} инструментов (IBM + скринер)")
@@ -176,16 +209,23 @@ def main() -> None:
         Recipient(label="Сергей (@sergikvsl)", telegram_chat_id="1253087193"),
         Recipient(label="Pavel", telegram_chat_id="980723803"),
     ]
-    # Одним сообщением-документом, а не разбиением по лимиту sendMessage
-    # (4096 символов) -- 5 сентября 2026, по запросу Леонида ("хочу, чтобы
-    # это объединилось в одно сообщение"). digest уже содержит HTML-теги
-    # (для формата format_verdict), _strip_html снимает их -- Telegram не
-    # рендерит HTML внутри содержимого файла-вложения.
-    caption = f"📋 Полный анализ -- {len(ALL_INSTRUMENTS)} инструментов, полный разбор во вложении"
-    result = send_document_via_telegram(
-        _strip_html(digest).encode("utf-8"), recipients, bot_token=bot_token, caption=caption, filename="analysis.txt"
-    )
+    # Только ПОКУПКА/ПРОДАЖА уходит в Telegram -- по прямому запросу
+    # Леонида, 5 сентября 2026 ("присылай только покупку или продажу").
+    # Полная картина по всем 15 (включая ЖДАТЬ) всё равно сохранена выше в
+    # output/last_analyst_report.txt -- локально, для отладки на сервере.
+    actionable = filter_actionable(results)
     print()
+    print(f"Актуальных сигналов (ПОКУПКА/ПРОДАЖА): {len(actionable)} из {len(ALL_INSTRUMENTS)}")
+
+    if not actionable:
+        print("Ничего не отправляем -- ни одного сигнала ПОКУПКА/ПРОДАЖА сейчас нет.")
+        return
+
+    report = build_actionable_report(actionable)
+    caption = f"📋 Актуальных сигналов: {len(actionable)} -- полный разбор во вложении"
+    result = send_document_via_telegram(
+        report.encode("utf-8"), recipients, bot_token=bot_token, caption=caption, filename="analysis.txt"
+    )
     print(f"--- Отправка (dry_run={result['dry_run']}, {result['document_bytes']} байт) ---")
     for entry in result["sent_to"]:
         print(f"  {entry['recipient']}: {entry['status']}")

@@ -45,7 +45,7 @@ from agents.dispatch_agent import (
 )
 from agents.intraday_agent import IntradayConfirmation
 from agents.ops_agent import LOG_TAIL_LIMIT, notify_failure
-from analyst_report import build_digest
+from analyst_report import build_actionable_report, build_digest, filter_actionable
 from opportunity_scanner import build_opportunity_report, find_opportunities
 from universe import load_sp500_universe
 from agents.fibo_agent import (
@@ -1173,6 +1173,38 @@ def test_build_digest_contains_all_cards_regardless_of_count():
     # же абзаца 15+ раз был шумом, не информацией).
     assert digest.count("Бэктест") == 1, digest.count("Бэктест")
     print("OK  test_build_digest_contains_all_cards_regardless_of_count")
+
+
+def test_filter_actionable_keeps_only_buy_and_sell():
+    # По запросу Леонида, 5 сентября 2026 ("присылай только покупку или
+    # продажу") -- analyst_report.py больше не шлёт ЖДАТЬ/ИНВАЛИДИРОВАНО/
+    # НЕТ АНАЛИЗА в Telegram, только реальные сигналы.
+    results = [
+        _mk_opportunity_result("A", CALL_BUY),
+        _mk_opportunity_result("B", CALL_WAIT),
+        _mk_opportunity_result("C", CALL_SELL),
+        _mk_opportunity_result("D", CALL_INVALIDATED),
+    ]
+    actionable = filter_actionable(results)
+    found = {r["instrument"].symbol for r in actionable}
+    assert found == {"A", "C"}, found
+    print("OK  test_filter_actionable_keeps_only_buy_and_sell")
+
+
+def test_filter_actionable_empty_when_all_wait():
+    results = [_mk_opportunity_result("A", CALL_WAIT), _mk_opportunity_result("B", CALL_NO_ANALYSIS)]
+    assert filter_actionable(results) == []
+    print("OK  test_filter_actionable_empty_when_all_wait")
+
+
+def test_build_actionable_report_no_html_and_single_caveat():
+    actionable = [_mk_opportunity_result(f"SYM{i}", CALL_BUY) for i in range(5)]
+    report = build_actionable_report(actionable)
+    for i in range(5):
+        assert f"SYM{i}" in report, f"SYM{i} отсутствует"
+    assert "<b>" not in report, "HTML-теги не должны попадать в файл-вложение"
+    assert report.count("Бэктест") == 1, report.count("Бэктест")
+    print("OK  test_build_actionable_report_no_html_and_single_caveat")
 
 
 def test_load_sp500_universe_returns_real_list_no_dotted_symbols():
