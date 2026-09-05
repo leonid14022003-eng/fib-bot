@@ -32,6 +32,7 @@ Structure / Fibo Agent
 
 from __future__ import annotations
 
+import math
 from dataclasses import dataclass
 from datetime import date
 from enum import Enum
@@ -190,7 +191,9 @@ def _build_structure(
 
     # Самопроверка раздела 10: точка 1 всегда 1, точка 2 всегда 0 -- это гарантировано
     # конструктивно (point1/point2 переданы уже в правильном порядке), но проверим explicit.
-    assert structure.price_at(1.0) == point1.price
-    assert structure.price_at(0.0) == point2.price
+    # math.isclose, а не == -- p2 + 1.0*(p1-p2) не всегда бит-в-бит восстанавливает p1
+    # из-за округления в двоичной арифметике (напр. GOOGL 120.21/252.41 -- расхождение ~1.4e-14).
+    assert math.isclose(structure.price_at(1.0), point1.price, rel_tol=1e-9, abs_tol=1e-9)
+    assert math.isclose(structure.price_at(0.0), point2.price, rel_tol=1e-9, abs_tol=1e-9)
 
     return structure
