@@ -90,6 +90,17 @@ def find_opportunities(results: list[dict]) -> list[dict]:
     return [r for r in results if r["status"] == "OK" and r["verdict"].call in (CALL_BUY, CALL_SELL)]
 
 
+def _format_card(r: dict) -> str:
+    return _strip_html(
+        format_verdict(
+            r["verdict"],
+            symbol=r["instrument"].symbol,
+            display_name=r["instrument"].label,
+            source_tag=r["bundle"].source_tag,
+        )
+    )
+
+
 def build_opportunity_report(opportunities: list[dict]) -> str:
     """
     Единый ПРОСТОЙ текст (без HTML-тегов) со всеми найденными возможностями
@@ -101,21 +112,24 @@ def build_opportunity_report(opportunities: list[dict]) -> str:
     HTML-тегами для sendMessage -- здесь они сняты через _strip_html()
     (dispatch_agent.py), т.к. Telegram не рендерит HTML внутри содержимого
     файла-вложения, только в теле текстового сообщения.
+
+    Разбито на два раздела -- ПОКУПКА отдельно, ПРОДАЖА отдельно -- по
+    прямому запросу Леонида в том же разговоре ("покупку отдельным
+    столбом, продажу отдельным столбом").
     """
+    buys = [r for r in opportunities if r["verdict"].call == CALL_BUY]
+    sells = [r for r in opportunities if r["verdict"].call == CALL_SELL]
+
     header = f"Новые возможности вне текущего списка -- {len(opportunities)}\n{'=' * 60}\n{BACKTEST_CAVEAT}\n"
     divider = "\n" + "-" * 40 + "\n"
-    cards = [
-        _strip_html(
-            format_verdict(
-                r["verdict"],
-                symbol=r["instrument"].symbol,
-                display_name=r["instrument"].label,
-                source_tag=r["bundle"].source_tag,
-            )
-        )
-        for r in opportunities
-    ]
-    return header + divider.join(cards)
+
+    sections = []
+    if buys:
+        sections.append(f"\n### ПОКУПКА ({len(buys)}) ###\n" + divider.join(_format_card(r) for r in buys))
+    if sells:
+        sections.append(f"\n### ПРОДАЖА ({len(sells)}) ###\n" + divider.join(_format_card(r) for r in sells))
+
+    return header + ("\n" + "=" * 60 + "\n").join(sections)
 
 
 def main() -> None:

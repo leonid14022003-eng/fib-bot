@@ -148,26 +148,37 @@ def filter_actionable(results: list[dict]) -> list[dict]:
     return [r for r in results if r["status"] == "OK" and r["verdict"].call in (CALL_BUY, CALL_SELL)]
 
 
+def _format_card(r: dict) -> str:
+    return _strip_html(
+        format_verdict(
+            r["verdict"],
+            symbol=r["instrument"].symbol,
+            display_name=r["instrument"].label,
+            source_tag=r["bundle"].source_tag,
+        )
+    )
+
+
 def build_actionable_report(actionable: list[dict]) -> str:
     """ПРОСТОЙ текст (без HTML-тегов, как и opportunity_scanner.build_opportunity_report)
     только с карточками ПОКУПКА/ПРОДАЖА -- это уходит в Telegram одним
     документом, если actionable непусто. BACKTEST_CAVEAT один раз в шапке
     (та же дисциплина, что и в build_digest()/build_opportunity_report --
-    не повторять на каждой карточке)."""
+    не повторять на каждой карточке). Разбито на два раздела -- ПОКУПКА
+    отдельно, ПРОДАЖА отдельно (по запросу Леонида, 5 сентября 2026)."""
+    buys = [r for r in actionable if r["verdict"].call == CALL_BUY]
+    sells = [r for r in actionable if r["verdict"].call == CALL_SELL]
+
     header = f"Актуальные сигналы (ПОКУПКА/ПРОДАЖА) -- {len(actionable)}\n{'=' * 60}\n{BACKTEST_CAVEAT}\n"
     divider = "\n" + "-" * 40 + "\n"
-    cards = [
-        _strip_html(
-            format_verdict(
-                r["verdict"],
-                symbol=r["instrument"].symbol,
-                display_name=r["instrument"].label,
-                source_tag=r["bundle"].source_tag,
-            )
-        )
-        for r in actionable
-    ]
-    return header + divider.join(cards)
+
+    sections = []
+    if buys:
+        sections.append(f"\n### ПОКУПКА ({len(buys)}) ###\n" + divider.join(_format_card(r) for r in buys))
+    if sells:
+        sections.append(f"\n### ПРОДАЖА ({len(sells)}) ###\n" + divider.join(_format_card(r) for r in sells))
+
+    return header + ("\n" + "=" * 60 + "\n").join(sections)
 
 
 def main() -> None:
