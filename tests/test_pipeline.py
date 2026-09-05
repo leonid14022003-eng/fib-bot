@@ -43,6 +43,7 @@ from agents.dispatch_agent import (
     should_send_level_watch,
 )
 from agents.intraday_agent import IntradayConfirmation
+from agents.ops_agent import LOG_TAIL_LIMIT, notify_failure
 from agents.fibo_agent import (
     Direction,
     FiboLevel,
@@ -1106,6 +1107,29 @@ def test_format_verdict_contains_call_and_confidence():
     assert v.confidence in text, text
     assert "TEST" in text, text
     print("OK  test_format_verdict_contains_call_and_confidence")
+
+
+def test_notify_failure_dry_run_reports_skipped_and_only_leonid():
+    result = notify_failure("test_job", "какая-то ошибка", bot_token=None)
+    assert result["dry_run"] is True, result
+    assert len(result["sent_to"]) == 1, result  # только Леонид, не все трое
+    assert result["sent_to"][0]["recipient"].startswith("Леонид"), result
+    print("OK  test_notify_failure_dry_run_reports_skipped_and_only_leonid")
+
+
+def test_notify_failure_truncates_long_log_tail():
+    long_log = "x" * (LOG_TAIL_LIMIT * 3)
+    result = notify_failure("test_job", long_log, bot_token=None)
+    # Само усечение происходит внутри message, а не в возвращаемом result --
+    # проверяем через message_preview, который send_via_telegram кладёт в dry-run.
+    assert len(result["message_preview"]) < len(long_log), result["message_preview"][:100]
+    print("OK  test_notify_failure_truncates_long_log_tail")
+
+
+def test_notify_failure_handles_empty_log():
+    result = notify_failure("test_job", "", bot_token=None)
+    assert "(лог пуст)" in result["message_preview"], result["message_preview"]
+    print("OK  test_notify_failure_handles_empty_log")
 
 
 if __name__ == "__main__":

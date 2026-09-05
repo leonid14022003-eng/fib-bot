@@ -19,3 +19,9 @@ export ANALYST_REPORT_SEND_REAL=1
 export ANALYST_REPORT_INCLUDE_INTRADAY=0
 cd /root/fib-bot
 python3 analyst_report.py >> output/analyst_report_cron.log 2>&1
+RC=$?
+if [ $RC -ne 0 ]; then
+    # Аварийное уведомление о сбое ПРОЦЕССА (не рыночный сигнал) -- только
+    # Леониду, см. agents/ops_agent.py. По его запросу 5 сентября 2026.
+    tail -n 50 output/analyst_report_cron.log | python3 notify_failure.py "run_analyst_report.sh (analyst_report.py, 15 инструментов)"
+fi

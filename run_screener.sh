@@ -12,3 +12,9 @@ set +a
 export FIB_BOT_LIVE=1
 cd /root/fib-bot
 python3 screener.py >> output/screener_cron.log 2>&1
+RC=$?
+if [ $RC -ne 0 ]; then
+    # Аварийное уведомление о сбое ПРОЦЕССА (не рыночный сигнал) -- только
+    # Леониду, см. agents/ops_agent.py. По его запросу 5 сентября 2026.
+    tail -n 50 output/screener_cron.log | python3 notify_failure.py "run_screener.sh (screener.py, 14 инструментов)"
+fi
