@@ -47,7 +47,7 @@ from agents.intraday_agent import IntradayConfirmation
 from agents.ops_agent import LOG_TAIL_LIMIT, notify_failure
 from analyst_report import build_actionable_report, build_digest, filter_actionable
 from opportunity_scanner import build_opportunity_report, find_opportunities
-from universe import load_sp500_universe
+from universe import load_binance_tradfi_universe, load_sp500_universe
 from agents.fibo_agent import (
     Direction,
     FiboLevel,
@@ -1215,6 +1215,52 @@ def test_load_sp500_universe_returns_real_list_no_dotted_symbols():
     assert "BRK-B" in symbols, symbols  # нормализовано из BRK.B (Wikipedia)
     assert not any("." in i.symbol for i in universe), [i for i in universe if "." in i.symbol]
     print("OK  test_load_sp500_universe_returns_real_list_no_dotted_symbols")
+
+
+def _mk_tradfi_symbol(symbol: str, base_asset: str, contract_type: str = "TRADIFI_PERPETUAL", status: str = "TRADING") -> dict:
+    return {"symbol": symbol, "baseAsset": base_asset, "contractType": contract_type, "status": status}
+
+
+def test_load_binance_tradfi_universe_maps_and_excludes_correctly():
+    # Синтетический exchangeInfo -- без сети (см. параметр exchange_info,
+    # тот же принцип, что и fetch_fn в screener.scan_instrument).
+    fake_info = {
+        "symbols": [
+            _mk_tradfi_symbol("TSLAUSDT", "TSLA"),  # обычный случай -- baseAsset как есть
+            _mk_tradfi_symbol("XAUUSDT", "XAU"),  # commodity override -- GCUSD
+            _mk_tradfi_symbol("BRKBUSDT", "BRKB"),  # equity override -- BRK-B
+            _mk_tradfi_symbol("QNTXUSDT", "QNTX"),  # в _TRADFI_EXCLUDE -- должен быть пропущен
+            _mk_tradfi_symbol("BTCUSDT", "BTC", contract_type="PERPETUAL"),  # не TradFi -- не должен попасть
+            _mk_tradfi_symbol("DEADUSDT", "DEAD", status="BREAK"),  # не TRADING -- не должен попасть
+            _mk_tradfi_symbol("SPCXUSDT", "SPCX"),  # дубликат base_asset...
+            _mk_tradfi_symbol("SPCXUSD1", "SPCX"),  # ...второй контракт на тот же актив -- должен пропуститься
+        ]
+    }
+    instruments, skipped = load_binance_tradfi_universe(exchange_info=fake_info)
+
+    symbols_map = {i.label: i.symbol for i in instruments}
+    assert symbols_map["TSLA"] == "TSLA", symbols_map
+    assert symbols_map["XAU"] == "GCUSD", symbols_map
+    assert symbols_map["BRKB"] == "BRK-B", symbols_map
+    assert "QNTX" not in symbols_map, symbols_map
+    assert "BTC" not in symbols_map, symbols_map  # не TradFi
+    assert "DEAD" not in symbols_map, symbols_map  # не TRADING
+    assert len([i for i in instruments if i.symbol == "SPCX"]) == 1, "дубликат base_asset должен схлопнуться в одну карточку"
+
+    skipped_bases = {s["base_asset"] for s in skipped}
+    assert "QNTX" in skipped_bases, skipped_bases
+    assert any("дубликат" in s["reason"] for s in skipped), skipped
+    print("OK  test_load_binance_tradfi_universe_maps_and_excludes_correctly")
+
+
+def test_load_binance_tradfi_universe_sets_fmp_source_and_venue_hint():
+    fake_info = {"symbols": [_mk_tradfi_symbol("NVDAUSDT", "NVDA")]}
+    instruments, _ = load_binance_tradfi_universe(exchange_info=fake_info)
+    assert len(instruments) == 1, instruments
+    inst = instruments[0]
+    assert inst.source == "fmp", inst  # анализ на реальном графике, не на Binance-токене
+    assert "NVDAUSDT" in inst.exchange_hint, inst  # Binance-тикер сохранён для "где торговать"
+    print("OK  test_load_binance_tradfi_universe_sets_fmp_source_and_venue_hint")
 
 
 def _mk_opportunity_result(symbol: str, call: str) -> dict:
