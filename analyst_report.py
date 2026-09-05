@@ -42,7 +42,7 @@ from pathlib import Path
 
 from agents.analyst_agent import analyze_series, format_verdict
 from agents.data_agent import load_fmp_daily
-from agents.dispatch_agent import Recipient, send_via_telegram
+from agents.dispatch_agent import Recipient, _strip_html, send_document_via_telegram
 from agents.intraday_agent import get_intraday_confirmations
 from screener import INSTRUMENTS, Instrument
 
@@ -102,9 +102,6 @@ def analyze_instrument(instrument: Instrument, include_intraday: bool = True) ->
     return {"instrument": instrument, "status": "OK", "bundle": bundle, "verdict": verdict}
 
 
-TELEGRAM_TEXT_LIMIT = 4096  # sendMessage, см. dispatch_agent.py про тот же лимит у format_message()
-
-
 def build_digest(results: list[dict]) -> str:
     """Единый текстовый дайджест (для output/last_analyst_report.txt --
     локальный файл, лимит Telegram тут не применяется) -- заголовок +
@@ -129,62 +126,6 @@ def build_digest(results: list[dict]) -> str:
             lines.append(f"• {r['instrument'].label} [{r['instrument'].symbol}]: {r['status']} -- {r['detail']}")
 
     return "\n".join(lines)
-
-
-def build_digest_messages(results: list[dict]) -> list[str]:
-    """
-    То же содержимое, что и build_digest(), но разбитое на несколько
-    сообщений, каждое СТРОГО в пределах TELEGRAM_TEXT_LIMIT -- 5 сентября
-    2026, по факту первого реального прогона: единое сообщение на 15
-    инструментов (16+ тыс. символов) ВСЕГДА превышает лимит Telegram
-    sendMessage, и Bot API отвечает 400 всем получателям -- отчёт не
-    доходил вообще никому (регламент, раздел 2: сигнал не должен теряться
-    молча).
-
-    Разбиение только МЕЖДУ целыми карточками инструментов -- карточка
-    одного инструмента никогда не режется пополам. Жадная упаковка: карточки
-    добавляются в текущее сообщение, пока не будет превышен лимит, тогда
-    начинается новое.
-    """
-    ok = [r for r in results if r["status"] == "OK"]
-    problems = [r for r in results if r["status"] != "OK"]
-
-    header = (
-        f"📋 <b>Полный анализ -- {len(results)} инструмент(ов)</b>\n"
-        f"Проанализировано: {len(ok)} · Пропущено: {len(problems)}"
-    )
-    divider = "\n" + "─" * 24 + "\n"
-
-    blocks = [
-        format_verdict(r["verdict"], symbol=r["instrument"].symbol, display_name=r["instrument"].label)
-        for r in ok
-    ]
-    if problems:
-        blocks.append(
-            "<b>Пропущено (нет данных/структуры):</b>\n"
-            + "\n".join(
-                f"• {r['instrument'].label} [{r['instrument'].symbol}]: {r['status']} -- {r['detail']}"
-                for r in problems
-            )
-        )
-
-    messages: list[str] = []
-    current = [header]
-    current_len = len(header)
-    for block in blocks:
-        addition = len(divider) + len(block)
-        if current_len + addition > TELEGRAM_TEXT_LIMIT and len(current) > 1:
-            messages.append(divider.join(current))
-            current = [block]
-            current_len = len(block)
-        else:
-            current.append(block)
-            current_len += addition
-    messages.append(divider.join(current))
-
-    if len(messages) > 1:
-        messages = [f"(часть {i + 1}/{len(messages)})\n\n{msg}" for i, msg in enumerate(messages)]
-    return messages
 
 
 def main() -> None:
@@ -226,17 +167,19 @@ def main() -> None:
         Recipient(label="Сергей (@sergikvsl)", telegram_chat_id="1253087193"),
         Recipient(label="Pavel", telegram_chat_id="980723803"),
     ]
-    # Несколько сообщений вместо одного -- см. докстринг build_digest_messages()
-    # про то, почему единое сообщение на 15 инструментов ВСЕГДА превышает
-    # лимит Telegram sendMessage (4096 символов) и не доходит вообще.
-    messages = build_digest_messages(results)
+    # Одним сообщением-документом, а не разбиением по лимиту sendMessage
+    # (4096 символов) -- 5 сентября 2026, по запросу Леонида ("хочу, чтобы
+    # это объединилось в одно сообщение"). digest уже содержит HTML-теги
+    # (для формата format_verdict), _strip_html снимает их -- Telegram не
+    # рендерит HTML внутри содержимого файла-вложения.
+    caption = f"📋 Полный анализ -- {len(ALL_INSTRUMENTS)} инструментов, полный разбор во вложении"
+    result = send_document_via_telegram(
+        _strip_html(digest).encode("utf-8"), recipients, bot_token=bot_token, caption=caption, filename="analysis.txt"
+    )
     print()
-    print(f"--- Отправка дайджеста, {len(messages)} сообщени(й) ---")
-    for i, message in enumerate(messages, start=1):
-        result = send_via_telegram(message, recipients, bot_token=bot_token)
-        print(f"  Часть {i}/{len(messages)} (dry_run={result['dry_run']}, {len(message)} символов):")
-        for entry in result["sent_to"]:
-            print(f"    {entry['recipient']}: {entry['status']}")
+    print(f"--- Отправка (dry_run={result['dry_run']}, {result['document_bytes']} байт) ---")
+    for entry in result["sent_to"]:
+        print(f"  {entry['recipient']}: {entry['status']}")
 
 
 if __name__ == "__main__":

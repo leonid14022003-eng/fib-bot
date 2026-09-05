@@ -36,9 +36,8 @@ import os
 
 from agents.analyst_agent import CALL_BUY, CALL_SELL, analyze_series, format_verdict
 from agents.data_agent import load_binance_daily, load_fmp_daily
-from agents.dispatch_agent import Recipient, send_via_telegram
+from agents.dispatch_agent import Recipient, _strip_html, send_document_via_telegram
 from analyst_report import ALL_INSTRUMENTS as TRACKED_INSTRUMENTS
-from analyst_report import TELEGRAM_TEXT_LIMIT
 from screener import Instrument
 from universe import load_binance_top_universe, load_sp500_universe
 
@@ -84,32 +83,25 @@ def find_opportunities(results: list[dict]) -> list[dict]:
     return [r for r in results if r["status"] == "OK" and r["verdict"].call in (CALL_BUY, CALL_SELL)]
 
 
-def build_opportunity_messages(opportunities: list[dict]) -> list[str]:
-    """Та же жадная упаковка по лимиту Telegram, что и в
-    analyst_report.build_digest_messages() -- см. его докстринг про то,
-    почему единое сообщение ненадёжно при нескольких карточках."""
-    header = f"🆕 <b>Новые возможности вне списка -- {len(opportunities)}</b>"
-    divider = "\n" + "─" * 24 + "\n"
+def build_opportunity_report(opportunities: list[dict]) -> str:
+    """
+    Единый ПРОСТОЙ текст (без HTML-тегов) со всеми найденными возможностями
+    -- 5 сентября 2026, по прямому запросу Леонида ("хочу, чтобы это
+    объединилось в одно сообщение"): вместо разбиения на несколько
+    sendMessage (лимит 4096 символов, см. analyst_report.build_digest_messages)
+    отчёт уходит ОДНИМ сообщением как файл-вложение (send_document_via_telegram) --
+    там лимита на размер текста нет. format_verdict() собирает карточки с
+    HTML-тегами для sendMessage -- здесь они сняты через _strip_html()
+    (dispatch_agent.py), т.к. Telegram не рендерит HTML внутри содержимого
+    файла-вложения, только в теле текстового сообщения.
+    """
+    header = f"Новые возможности вне текущего списка -- {len(opportunities)}\n{'=' * 60}\n"
+    divider = "\n" + "-" * 40 + "\n"
     cards = [
-        format_verdict(r["verdict"], symbol=r["instrument"].symbol, display_name=r["instrument"].label)
+        _strip_html(format_verdict(r["verdict"], symbol=r["instrument"].symbol, display_name=r["instrument"].label))
         for r in opportunities
     ]
-    messages: list[str] = []
-    current = [header]
-    current_len = len(header)
-    for card in cards:
-        addition = len(divider) + len(card)
-        if current_len + addition > TELEGRAM_TEXT_LIMIT and len(current) > 1:
-            messages.append(divider.join(current))
-            current = [card]
-            current_len = len(card)
-        else:
-            current.append(card)
-            current_len += addition
-    messages.append(divider.join(current))
-    if len(messages) > 1:
-        messages = [f"(часть {i + 1}/{len(messages)})\n\n{m}" for i, m in enumerate(messages)]
-    return messages
+    return header + divider.join(cards)
 
 
 def main() -> None:
@@ -138,7 +130,7 @@ def main() -> None:
         print("Ничего не отправляем -- нет возможностей вне текущего списка (регламент, раздел 2: не слать шум).")
         return
 
-    messages = build_opportunity_messages(opportunities)
+    report_text = build_opportunity_report(opportunities)
 
     send_real = bool(os.environ.get("TELEGRAM_BOT_TOKEN")) and os.environ.get("OPPORTUNITY_SCANNER_SEND_REAL") == "1"
     bot_token = os.environ.get("TELEGRAM_BOT_TOKEN") if send_real else None
@@ -147,11 +139,13 @@ def main() -> None:
         Recipient(label="Сергей (@sergikvsl)", telegram_chat_id="1253087193"),
         Recipient(label="Pavel", telegram_chat_id="980723803"),
     ]
-    for idx, message in enumerate(messages, start=1):
-        result = send_via_telegram(message, recipients, bot_token=bot_token)
-        print(f"  Часть {idx}/{len(messages)} (dry_run={result['dry_run']}):")
-        for entry in result["sent_to"]:
-            print(f"    {entry['recipient']}: {entry['status']}")
+    caption = f"🆕 Новых возможностей вне списка: {len(opportunities)} -- полный разбор во вложении"
+    result = send_document_via_telegram(
+        report_text.encode("utf-8"), recipients, bot_token=bot_token, caption=caption, filename="opportunities.txt"
+    )
+    print(f"--- Отправка (dry_run={result['dry_run']}, {result['document_bytes']} байт) ---")
+    for entry in result["sent_to"]:
+        print(f"  {entry['recipient']}: {entry['status']}")
 
 
 if __name__ == "__main__":

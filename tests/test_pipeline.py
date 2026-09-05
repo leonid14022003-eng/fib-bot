@@ -39,13 +39,14 @@ from agents.dispatch_agent import (
     _depth_bar,
     _strip_html,
     format_message,
+    send_document_via_telegram,
     send_photo_via_telegram,
     should_send_level_watch,
 )
 from agents.intraday_agent import IntradayConfirmation
 from agents.ops_agent import LOG_TAIL_LIMIT, notify_failure
-from analyst_report import TELEGRAM_TEXT_LIMIT, build_digest_messages
-from opportunity_scanner import build_opportunity_messages, find_opportunities
+from analyst_report import build_digest
+from opportunity_scanner import build_opportunity_report, find_opportunities
 from universe import load_sp500_universe
 from agents.fibo_agent import (
     Direction,
@@ -487,6 +488,16 @@ def test_send_photo_via_telegram_dry_run_reports_skipped():
     assert result["photo_bytes"] == len(png)
     assert result["sent_to"][0]["status"].startswith("SKIPPED")
     print("OK  test_send_photo_via_telegram_dry_run_reports_skipped")
+
+
+def test_send_document_via_telegram_dry_run_reports_skipped():
+    doc = "полный текстовый отчёт".encode("utf-8")
+    recipients = [Recipient(label="Тест", telegram_chat_id="123")]
+    result = send_document_via_telegram(doc, recipients, bot_token=None, caption="тест")
+    assert result["dry_run"] is True
+    assert result["document_bytes"] == len(doc)
+    assert result["sent_to"][0]["status"].startswith("SKIPPED")
+    print("OK  test_send_document_via_telegram_dry_run_reports_skipped")
 
 
 def _fmp_calendar_fixture() -> list[dict]:
@@ -1136,44 +1147,25 @@ def test_notify_failure_handles_empty_log():
 
 
 def _mk_analyst_result(symbol: str, fraction: float = 0.4) -> dict:
-    """Синтетический элемент results[] для build_digest_messages() --
-    та же форма, что и analyze_instrument() возвращает при status='OK'."""
+    """Синтетический элемент results[] для build_digest() -- та же форма,
+    что и analyze_instrument() возвращает при status='OK'."""
     bundle = _mk_bundle(fraction=fraction)
     verdict = build_verdict(bundle)
     return {"instrument": Instrument(symbol, symbol, "synthetic"), "status": "OK", "bundle": bundle, "verdict": verdict}
 
 
-def test_build_digest_messages_single_message_when_small():
-    results = [_mk_analyst_result("A"), _mk_analyst_result("B")]
-    messages = build_digest_messages(results)
-    assert len(messages) == 1, messages
-    assert "часть" not in messages[0], messages[0]  # префикс страницы не нужен, когда сообщение одно
-    print("OK  test_build_digest_messages_single_message_when_small")
-
-
-def test_build_digest_messages_splits_when_too_long_for_telegram():
+def test_build_digest_contains_all_cards_regardless_of_count():
     # 15 инструментов -- ровно то число, на котором реально упал первый
-    # прогон 5 сентября 2026 (единое сообщение 16+ тыс. символов, Telegram
-    # ответил 400 всем троим).
+    # прогон 5 сентября 2026 (единое СООБЩЕНИЕ 16+ тыс. символов, Telegram
+    # ответил 400 всем троим -- см. коммит d6ec7f0). После перехода на
+    # send_document_via_telegram (5 сентября, по запросу "объединить в одно
+    # сообщение") лимита на размер текста больше нет -- build_digest() всегда
+    # один документ на любое число инструментов, ничего не обрезается.
     results = [_mk_analyst_result(f"SYM{i}") for i in range(15)]
-    messages = build_digest_messages(results)
-    assert len(messages) > 1, "15 инструментов должны были не влезть в одно сообщение"
-    for m in messages:
-        assert len(m) <= TELEGRAM_TEXT_LIMIT, f"сообщение превышает лимит Telegram: {len(m)} символов"
-        assert "часть" in m, m  # при нескольких частях каждая помечена номером
-    print("OK  test_build_digest_messages_splits_when_too_long_for_telegram")
-
-
-def test_build_digest_messages_never_splits_a_single_card():
-    # Каждая карточка целиком должна оказаться внутри РОВНО одного сообщения --
-    # ищем текст конкретного тикера и убеждаемся, что он не размазан.
-    results = [_mk_analyst_result(f"SYM{i}") for i in range(15)]
-    messages = build_digest_messages(results)
+    digest = build_digest(results)
     for i in range(15):
-        symbol = f"SYM{i}"
-        containing = [m for m in messages if f"<b>{symbol}</b>" in m]
-        assert len(containing) == 1, f"{symbol} должен встретиться ровно в одном сообщении, найдено в {len(containing)}"
-    print("OK  test_build_digest_messages_never_splits_a_single_card")
+        assert f"<b>SYM{i}</b>" in digest, f"SYM{i} отсутствует в дайджесте"
+    print("OK  test_build_digest_contains_all_cards_regardless_of_count")
 
 
 def test_load_sp500_universe_returns_real_list_no_dotted_symbols():
@@ -1219,13 +1211,19 @@ def test_find_opportunities_empty_when_nothing_qualifies():
     print("OK  test_find_opportunities_empty_when_nothing_qualifies")
 
 
-def test_build_opportunity_messages_respects_telegram_limit():
-    opportunities = [_mk_opportunity_result(f"SYM{i}", CALL_BUY) for i in range(15)]
-    messages = build_opportunity_messages(opportunities)
-    assert len(messages) > 1, "15 карточек должны были не влезть в одно сообщение"
-    for m in messages:
-        assert len(m) <= TELEGRAM_TEXT_LIMIT, f"сообщение превышает лимит Telegram: {len(m)} символов"
-    print("OK  test_build_opportunity_messages_respects_telegram_limit")
+def test_build_opportunity_report_contains_all_cards_and_no_html():
+    # 5 сентября 2026: 69 реальных находок за один прогон подтвердили, что
+    # даже единственное sendMessage-сообщение с таким числом карточек
+    # физически не влезает в лимит Telegram (4096 символов) -- отчёт уходит
+    # ОДНИМ документом (send_document_via_telegram), без лимита на размер, и
+    # без HTML-тегов (Telegram не рендерит HTML внутри файла-вложения,
+    # только в теле текстового сообщения -- см. _strip_html в opportunity_scanner.py).
+    opportunities = [_mk_opportunity_result(f"SYM{i}", CALL_BUY) for i in range(20)]
+    report = build_opportunity_report(opportunities)
+    for i in range(20):
+        assert f"SYM{i}" in report, f"SYM{i} отсутствует в отчёте"
+    assert "<b>" not in report and "</b>" not in report, "HTML-теги не должны попадать в текст файла-вложения"
+    print("OK  test_build_opportunity_report_contains_all_cards_and_no_html")
 
 
 if __name__ == "__main__":

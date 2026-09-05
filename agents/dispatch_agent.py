@@ -436,3 +436,57 @@ def send_photo_via_telegram(
         except Exception as e:  # сеть недоступна, таймаут и т.п. -- фиксируем как есть, не молчим
             result["sent_to"].append({"recipient": r.label, "status": f"EXCEPTION: {e}"})
     return result
+
+
+def send_document_via_telegram(
+    document_bytes: bytes,
+    recipients: list[Recipient],
+    bot_token: str | None,
+    caption: str | None = None,
+    filename: str = "report.txt",
+) -> dict:
+    """
+    Отправка текстового файла-вложения через Bot API sendDocument --
+    добавлено 5 сентября 2026, по прямому запросу Леонида ("хочу, чтобы
+    это объединилось в одно сообщение"): analyst_report.py/
+    opportunity_scanner.py при большом числе карточек (десятки
+    инструментов) физически не помещаются в лимит sendMessage (4096
+    символов, см. build_digest_messages в analyst_report.py) даже после
+    разбиения на много сообщений -- то же самое содержимое, но ОДНИМ
+    сообщением с вложением, без обрезания текста и без разбиения на части.
+
+    caption -- как и у send_photo_via_telegram, у sendDocument лимит
+    подписи 1024 символа -- сюда идёт короткая сводка (например,
+    "N возможностей"), а не сам разбор -- разбор целиком в файле.
+
+    bot_token is None -> DRY RUN, тот же принцип, что и везде в этом
+    модуле. Каждый получатель обрабатывается независимо, ни одна неудача
+    не маскируется под успех ни для кого другого.
+    """
+    result = {"dry_run": bot_token is None, "sent_to": [], "document_bytes": len(document_bytes)}
+    for r in recipients:
+        if bot_token is None or r.telegram_chat_id is None:
+            result["sent_to"].append({"recipient": r.label, "status": "SKIPPED (нет токена или chat_id)"})
+            continue
+        import requests  # локальный импорт: не нужен в dry-run/тестах, только для реальной отправки
+
+        data = {"chat_id": r.telegram_chat_id}
+        if caption:
+            data["caption"] = caption
+        try:
+            resp = requests.post(
+                f"https://api.telegram.org/bot{bot_token}/sendDocument",
+                data=data,
+                files={"document": (filename, document_bytes, "text/plain")},
+                timeout=30,
+            )
+            payload = resp.json() if resp.content else {}
+            if resp.status_code == 200 and payload.get("ok"):
+                result["sent_to"].append({"recipient": r.label, "status": "sent"})
+            else:
+                result["sent_to"].append(
+                    {"recipient": r.label, "status": f"ERROR {resp.status_code}: {str(payload)[:200]}"}
+                )
+        except Exception as e:  # сеть недоступна, таймаут и т.п. -- фиксируем как есть, не молчим
+            result["sent_to"].append({"recipient": r.label, "status": f"EXCEPTION: {e}"})
+    return result
