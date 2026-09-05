@@ -20,6 +20,7 @@ Verification / Consensus Agent
 
 from __future__ import annotations
 
+import math
 from dataclasses import dataclass
 
 from agents.fibo_agent import FiboStructure
@@ -51,14 +52,18 @@ def run_checklist(structure: FiboStructure, source_tag: str) -> ChecklistReport:
     results.append(
         CheckResult(
             "точка 1 действительно равна 1",
-            structure.price_at(1.0) == structure.point1.price,
+            # math.isclose, а не == -- та же двоичная погрешность округления, что
+            # чинили в fibo_agent.py._build_structure (напр. GOOGL 120.21/252.41,
+            # расхождение ~1.4e-14): точное побитовое сравнение может дать False
+            # на математически верной структуре и молча заблокировать алерт.
+            math.isclose(structure.price_at(1.0), structure.point1.price, rel_tol=1e-9, abs_tol=1e-9),
             f"price_at(1.0)={structure.price_at(1.0)} vs point1.price={structure.point1.price}",
         )
     )
     results.append(
         CheckResult(
             "точка 2 действительно равна 0",
-            structure.price_at(0.0) == structure.point2.price,
+            math.isclose(structure.price_at(0.0), structure.point2.price, rel_tol=1e-9, abs_tol=1e-9),
             f"price_at(0.0)={structure.price_at(0.0)} vs point2.price={structure.point2.price}",
         )
     )
