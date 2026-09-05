@@ -1086,7 +1086,10 @@ def test_build_verdict_sell_call_for_descending_structure_in_watch_zone():
     v = build_verdict(bundle)
     assert v.call == CALL_SELL, v
     assert v.confidence == CONFIDENCE_GUESS, v  # без подтверждений -- низкая уверенность
-    assert any("Бэктест" in c for c in v.caveats), v  # честное предупреждение всегда присутствует
+    # BACKTEST_CAVEAT больше не кладётся в caveats КАЖДОГО вердикта (5 сентября
+    # 2026 -- при десятках карточек это был повторяющийся шум); он показывается
+    # ОДИН раз на уровне отчёта, см. build_digest()/build_opportunity_report().
+    assert not any("Бэктест" in c for c in v.caveats), v
     print("OK  test_build_verdict_sell_call_for_descending_structure_in_watch_zone")
 
 
@@ -1165,6 +1168,10 @@ def test_build_digest_contains_all_cards_regardless_of_count():
     digest = build_digest(results)
     for i in range(15):
         assert f"<b>SYM{i}</b>" in digest, f"SYM{i} отсутствует в дайджесте"
+    # BACKTEST_CAVEAT -- ровно один раз на весь отчёт, а не на каждую из 15
+    # карточек (5 сентября 2026, по запросу Леонида -- повтор одного и того
+    # же абзаца 15+ раз был шумом, не информацией).
+    assert digest.count("Бэктест") == 1, digest.count("Бэктест")
     print("OK  test_build_digest_contains_all_cards_regardless_of_count")
 
 
@@ -1223,6 +1230,8 @@ def test_build_opportunity_report_contains_all_cards_and_no_html():
     for i in range(20):
         assert f"SYM{i}" in report, f"SYM{i} отсутствует в отчёте"
     assert "<b>" not in report and "</b>" not in report, "HTML-теги не должны попадать в текст файла-вложения"
+    # BACKTEST_CAVEAT -- ровно один раз на весь отчёт, а не на каждую из 20 карточек.
+    assert report.count("Бэктест") == 1, report.count("Бэктест")
     print("OK  test_build_opportunity_report_contains_all_cards_and_no_html")
 
 

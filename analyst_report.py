@@ -40,7 +40,7 @@ from __future__ import annotations
 import os
 from pathlib import Path
 
-from agents.analyst_agent import analyze_series, format_verdict
+from agents.analyst_agent import BACKTEST_CAVEAT, analyze_series, format_verdict
 from agents.data_agent import load_fmp_daily
 from agents.dispatch_agent import Recipient, _strip_html, send_document_via_telegram
 from agents.intraday_agent import get_intraday_confirmations
@@ -113,6 +113,7 @@ def build_digest(results: list[dict]) -> str:
     lines = [
         f"📋 <b>Полный анализ -- {len(results)} инструмент(ов)</b>",
         f"Проанализировано: {len(ok)} · Пропущено: {len(problems)}",
+        f"<i>{BACKTEST_CAVEAT}</i>",
         "",
     ]
     divider = "─" * 24

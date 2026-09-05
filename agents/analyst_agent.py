@@ -97,7 +97,15 @@ def build_verdict(
 
     s = bundle.structure
     frac = retracement_fraction(bundle)
-    caveats: list[str] = [BACKTEST_CAVEAT]
+    # BACKTEST_CAVEAT сюда больше НЕ добавляется -- 5 сентября 2026, по
+    # прямому запросу Леонида: при большом числе карточек (opportunity_scanner.py,
+    # десятки инструментов) один и тот же абзац повторялся на каждой,
+    # это был шум, а не информация. Показывается ОДИН раз на весь отчёт
+    # (см. build_digest()/build_opportunity_report()), а не на каждую
+    # карточку. Здесь caveats остаются только для СПЕЦИФИЧНЫХ по этому
+    # инструменту предупреждений (сверка не согласна, intraday конфликт) --
+    # это не шаблон, а реальный сигнал риска именно по этой монете/акции.
+    caveats: list[str] = []
 
     is_ascending = s.direction == Direction.ASCENDING
     continuation_call = CALL_BUY if is_ascending else CALL_SELL
