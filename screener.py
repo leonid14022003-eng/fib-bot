@@ -66,8 +66,11 @@ WATCH_LEVELS = (0.618, 0.786, 1.0)  # тот же порог, что и у то�
 @dataclass(frozen=True)
 class Instrument:
     label: str  # человеко-читаемое имя, для сообщений
-    symbol: str  # тикер, как передаётся в load_fmp_daily
+    symbol: str  # тикер, как передаётся в load_fmp_daily / load_binance_daily
     exchange_hint: str
+    source: str = "fmp"  # "fmp" (акции/индексы/товары) или "binance" (крипта) --
+    # добавлено 5 сентября для opportunity_scanner.py, дефолт сохраняет старое
+    # поведение для существующих 15 инструментов (все они -- "fmp")
 
 
 # Черновик из claude/brief.md -- индексы, товары, мегакапы. Проверено вживую

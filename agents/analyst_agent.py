@@ -24,9 +24,12 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 
+from agents.data_agent import CandleSeries
 from agents.dispatch_agent import AnalysisBundle, retracement_fraction
-from agents.fibo_agent import Direction
+from agents.fibo_agent import Direction, build_global_fibo, find_fractal_swing_extremes, find_oldest_unbroken_extremes
 from agents.intraday_agent import IntradayConfirmation
+from agents.price_behavior_agent import nearest_level, recent_level_events
+from agents.verification_agent import cross_check_structures, run_checklist
 
 CALL_BUY = "ПОКУПКА"
 CALL_SELL = "ПРОДАЖА"
@@ -215,3 +218,54 @@ def format_verdict(verdict: Verdict, symbol: str, display_name: str | None = Non
         for c in verdict.caveats:
             lines.append(f"• {c}")
     return "\n".join(lines)
+
+
+def analyze_series(
+    series: CandleSeries,
+    intraday_confirmations: list[IntradayConfirmation] | None = None,
+) -> tuple[AnalysisBundle, Verdict]:
+    """
+    Общий путь Structure/Fibo -> Price-Behavior -> Verification ->
+    независимая сверка -> Verdict, для УЖЕ ПОЛУЧЕННЫХ свечей (данные
+    получает вызывающий код -- этой функции всё равно, откуда series,
+    FMP или Binance). Вынесено 5 сентября 2026, чтобы analyst_report.py
+    и opportunity_scanner.py не дублировали один и тот же кусок логики.
+
+    НЕ используется screener.py/orchestrator.py (боевой level-watch cron)
+    -- та ветка производственного кода не тронута, чтобы не рисковать
+    уже работающими алертами ради рефакторинга.
+
+    Бросает ValueError, если структура не подтвердилась (см.
+    find_oldest_unbroken_extremes) -- вызывающий код должен поймать её
+    сам, как и в screener.scan_instrument().
+    """
+    structure = build_global_fibo(series, extremes_fn=find_oldest_unbroken_extremes)
+    current_price = series.candles[-1].close
+    n = nearest_level(structure, current_price)
+    events = recent_level_events(structure, series.candles, lookback=10)
+    report = run_checklist(structure, series.exchange_or_source)
+
+    try:
+        fractal_structure = build_global_fibo(series, extremes_fn=find_fractal_swing_extremes)
+        consensus = cross_check_structures(structure, fractal_structure)
+        consensus_agree, consensus_detail = consensus.agree, consensus.detail
+    except ValueError as e:
+        consensus_agree, consensus_detail = None, str(e)
+
+    bundle = AnalysisBundle(
+        symbol=series.symbol,
+        source_tag=series.exchange_or_source,
+        timeframe=series.timeframe,
+        period_desc=f"{series.start} .. {series.end} ({len(series.candles)} дневных свечей)",
+        structure=structure,
+        nearest=n,
+        recent_events=events,
+        checklist=report,
+    )
+    verdict = build_verdict(
+        bundle,
+        consensus_agree=consensus_agree,
+        consensus_detail=consensus_detail,
+        intraday_confirmations=intraday_confirmations,
+    )
+    return bundle, verdict

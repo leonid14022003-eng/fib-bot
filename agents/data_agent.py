@@ -32,7 +32,7 @@ from __future__ import annotations
 import os
 import re
 from dataclasses import dataclass
-from datetime import date, datetime, timedelta
+from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 
 
@@ -181,6 +181,85 @@ def load_fmp_daily(
         candles=candles,
         fetched_via="requests.get (прямой HTTP, без суммаризирующего слоя)",
         fetch_note=f"Запрошен диапазон {date_from.isoformat()}..{today.isoformat()} ({months_back} мес.)",
+    )
+
+
+def load_binance_daily(
+    symbol: str,
+    market: str = "futures",
+    limit: int = 1000,
+) -> CandleSeries:
+    """
+    Реальный источник для крипто-инструментов -- Binance klines, дневной
+    таймфрейм. Добавлено 5 сентября 2026, по запросу Леонида (расширение
+    охвата бота на криптовалюты, не только акции из screener.py).
+
+    ВАЖНО, в отличие от более раннего черновика binance-fib-bot/ (1
+    сентября 2026, см. CLAUDE.md "Открытые пункты") -- ТАМ проверка шла из
+    песочницы Claude, и Binance отвечал 451 (геоблок). Здесь функция
+    рассчитана на запуск с VPS (как и load_fmp_daily) -- прямой curl с
+    ЭТОГО сервера 5 сентября вернул 200 и реальные данные, геоблок здесь не
+    действует. Если это когда-нибудь перестанет быть так (Binance изменит
+    политику или сервер переедет) -- requests.raise_for_status() ниже
+    честно бросит ошибку, а не тихо подставит пустые/старые данные.
+
+    market="futures" -> fapi.binance.com (USDT-M perpetual и т.п., 762
+    торгуемых пары на 5 сентября 2026), market="spot" -> api.binance.com.
+    interval всегда "1d" -- тот же дневной таймфрейм, что у load_fmp_daily().
+
+    limit -- сколько последних дневных свечей запросить (Binance отдаёт
+    максимум 1500 за один вызов -- здесь дефолт 1000, с запасом ниже
+    потолка, не проверялось программно, что именно 1500 -- предположение
+    по публичной документации Binance).
+
+    volume у Binance приходит строкой с плавающей точкой в БАЗОВОМ активе
+    (не в USDT) -- Candle.volume типизирован int везде в проекте, поэтому
+    дробная часть теряется при приведении. Для price_behavior_agent.py
+    (сравнение объёма пробоя со средним ЗА ТОТ ЖЕ инструмент) это не
+    критично -- отношения объёмов искажаются на пренебрежимую величину;
+    точная сумма в мелких долях монеты честно не сохраняется, не
+    выдаётся за неё.
+    """
+    import requests  # локальный импорт, как и у load_fmp_daily -- см. комментарий там
+
+    base_url = (
+        "https://fapi.binance.com/fapi/v1/klines"
+        if market == "futures"
+        else "https://api.binance.com/api/v3/klines"
+    )
+    params = {"symbol": symbol, "interval": "1d", "limit": limit}
+    resp = requests.get(base_url, params=params, timeout=20)
+    resp.raise_for_status()
+    payload = resp.json()
+    if not isinstance(payload, list):
+        # Binance отдаёт ошибки как {"code": ..., "msg": "..."} -- бросаем как
+        # есть, не пытаемся угадать/подставить данные вместо ошибки (регламент,
+        # раздел 2).
+        raise ValueError(f"Неожиданный ответ Binance (ожидался массив свечей): {payload}")
+    candles = [
+        Candle(
+            dt=datetime.fromtimestamp(row[0] / 1000, tz=timezone.utc).date(),
+            open=float(row[1]),
+            high=float(row[2]),
+            low=float(row[3]),
+            close=float(row[4]),
+            volume=int(float(row[5])),
+        )
+        for row in payload
+    ]
+    candles.sort(key=lambda c: c.dt)
+    if not candles:
+        raise ValueError(f"Binance вернул пустой список свечей для {symbol} ({market})")
+    bad = [c for c in candles if not (c.high >= max(c.open, c.close) and c.low <= min(c.open, c.close))]
+    if bad:
+        raise ValueError(f"Структурно некорректные свечи от Binance (high/low не огибают open/close): {bad}")
+    return CandleSeries(
+        symbol=symbol,
+        exchange_or_source=f"Binance {market} klines -- CRYPTO",
+        timeframe="1D",
+        candles=candles,
+        fetched_via="requests.get (прямой HTTP к Binance)",
+        fetch_note=f"interval=1d, limit={limit} (~{limit} последних дневных свечей)",
     )
 
 

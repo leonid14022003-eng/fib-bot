@@ -45,6 +45,8 @@ from agents.dispatch_agent import (
 from agents.intraday_agent import IntradayConfirmation
 from agents.ops_agent import LOG_TAIL_LIMIT, notify_failure
 from analyst_report import TELEGRAM_TEXT_LIMIT, build_digest_messages
+from opportunity_scanner import build_opportunity_messages, find_opportunities
+from universe import load_sp500_universe
 from agents.fibo_agent import (
     Direction,
     FiboLevel,
@@ -1172,6 +1174,58 @@ def test_build_digest_messages_never_splits_a_single_card():
         containing = [m for m in messages if f"<b>{symbol}</b>" in m]
         assert len(containing) == 1, f"{symbol} должен встретиться ровно в одном сообщении, найдено в {len(containing)}"
     print("OK  test_build_digest_messages_never_splits_a_single_card")
+
+
+def test_load_sp500_universe_returns_real_list_no_dotted_symbols():
+    universe = load_sp500_universe()
+    assert len(universe) > 400, len(universe)  # реальный список, не заглушка
+    symbols = {i.symbol for i in universe}
+    assert "AAPL" in symbols, symbols
+    assert "BRK-B" in symbols, symbols  # нормализовано из BRK.B (Wikipedia)
+    assert not any("." in i.symbol for i in universe), [i for i in universe if "." in i.symbol]
+    print("OK  test_load_sp500_universe_returns_real_list_no_dotted_symbols")
+
+
+def _mk_opportunity_result(symbol: str, call: str) -> dict:
+    """Синтетический элемент results[] со ЗАДАННЫМ call -- в отличие от
+    _mk_analyst_result() (test_pipeline.py выше), здесь call подставляется
+    напрямую через dataclasses.replace, не через fraction, потому что
+    find_opportunities() фильтрует именно по call, а не по глубине."""
+    import dataclasses
+
+    bundle = _mk_bundle(fraction=0.7)
+    verdict = build_verdict(bundle)
+    verdict = dataclasses.replace(verdict, call=call)
+    return {"instrument": Instrument(symbol, symbol, "synthetic"), "status": "OK", "bundle": bundle, "verdict": verdict}
+
+
+def test_find_opportunities_filters_to_buy_and_sell_only():
+    results = [
+        _mk_opportunity_result("A", CALL_BUY),
+        _mk_opportunity_result("B", CALL_WAIT),
+        _mk_opportunity_result("C", CALL_SELL),
+        _mk_opportunity_result("D", CALL_INVALIDATED),
+        _mk_opportunity_result("E", CALL_NO_ANALYSIS),
+    ]
+    opportunities = find_opportunities(results)
+    found_symbols = {r["instrument"].symbol for r in opportunities}
+    assert found_symbols == {"A", "C"}, found_symbols
+    print("OK  test_find_opportunities_filters_to_buy_and_sell_only")
+
+
+def test_find_opportunities_empty_when_nothing_qualifies():
+    results = [_mk_opportunity_result("A", CALL_WAIT), _mk_opportunity_result("B", CALL_NO_ANALYSIS)]
+    assert find_opportunities(results) == []
+    print("OK  test_find_opportunities_empty_when_nothing_qualifies")
+
+
+def test_build_opportunity_messages_respects_telegram_limit():
+    opportunities = [_mk_opportunity_result(f"SYM{i}", CALL_BUY) for i in range(15)]
+    messages = build_opportunity_messages(opportunities)
+    assert len(messages) > 1, "15 карточек должны были не влезть в одно сообщение"
+    for m in messages:
+        assert len(m) <= TELEGRAM_TEXT_LIMIT, f"сообщение превышает лимит Telegram: {len(m)} символов"
+    print("OK  test_build_opportunity_messages_respects_telegram_limit")
 
 
 if __name__ == "__main__":

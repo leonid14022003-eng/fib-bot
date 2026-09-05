@@ -40,13 +40,10 @@ from __future__ import annotations
 import os
 from pathlib import Path
 
-from agents.analyst_agent import build_verdict, format_verdict
+from agents.analyst_agent import analyze_series, format_verdict
 from agents.data_agent import load_fmp_daily
-from agents.dispatch_agent import AnalysisBundle, Recipient, send_via_telegram
-from agents.fibo_agent import build_global_fibo, find_fractal_swing_extremes, find_oldest_unbroken_extremes
+from agents.dispatch_agent import Recipient, send_via_telegram
 from agents.intraday_agent import get_intraday_confirmations
-from agents.price_behavior_agent import nearest_level, recent_level_events
-from agents.verification_agent import cross_check_structures, run_checklist
 from screener import INSTRUMENTS, Instrument
 
 ROOT = Path(__file__).resolve().parent
@@ -68,13 +65,9 @@ INCLUDE_INTRADAY = os.environ.get("ANALYST_REPORT_INCLUDE_INTRADAY", "1") != "0"
 
 def analyze_instrument(instrument: Instrument, include_intraday: bool = True) -> dict:
     """
-    Один инструмент, целиком: Data -> Structure/Fibo -> Price-Behavior ->
-    Verification -> независимая сверка -> (опционально) внутридневное
-    подтверждение -> Analyst. Намеренно НЕ переиспользует
-    screener.scan_instrument() -- тому нужен только формат. строка
-    consensus_note, а здесь нужен сырой ConsensusResult для build_verdict();
-    дублирует несколько строк его тела, но не меняет и не трогает сам
-    screener.py (production-код, от которого зависит боевой cron).
+    Один инструмент, целиком: Data -> analyze_series() (agents/analyst_agent.py
+    -- Structure/Fibo -> Price-Behavior -> Verification -> независимая
+    сверка -> Verdict) -> опционально внутридневное подтверждение.
 
     Никогда не бросает исключение наружу -- любая ошибка (сеть, тикер,
     структура не подтвердилась) превращается в статус в словаре, чтобы
@@ -85,34 +78,8 @@ def analyze_instrument(instrument: Instrument, include_intraday: bool = True) ->
         series = load_fmp_daily(instrument.symbol, exchange_hint=instrument.exchange_hint)
     except Exception as e:
         return {"instrument": instrument, "status": "DATA_ERROR", "detail": str(e)}
-    try:
-        structure = build_global_fibo(series, extremes_fn=find_oldest_unbroken_extremes)
-    except ValueError as e:
-        return {"instrument": instrument, "status": "NO_STRUCTURE", "detail": str(e)}
 
     current_price = series.candles[-1].close
-    n = nearest_level(structure, current_price)
-    events = recent_level_events(structure, series.candles, lookback=10)
-    report = run_checklist(structure, series.exchange_or_source)
-
-    try:
-        fractal_structure = build_global_fibo(series, extremes_fn=find_fractal_swing_extremes)
-        consensus = cross_check_structures(structure, fractal_structure)
-        consensus_agree, consensus_detail = consensus.agree, consensus.detail
-    except ValueError as e:
-        consensus_agree, consensus_detail = None, str(e)
-
-    bundle = AnalysisBundle(
-        symbol=series.symbol,
-        source_tag=series.exchange_or_source,
-        timeframe=series.timeframe,
-        period_desc=f"{series.start} .. {series.end} ({len(series.candles)} дневных свечей)",
-        structure=structure,
-        nearest=n,
-        recent_events=events,
-        checklist=report,
-    )
-
     # Внутридневное подтверждение -- 2 сетевых запроса на инструмент (см.
     # intraday_agent.py про стоимость). Этот отчёт запускается вручную/по
     # отдельному расписанию (не раз в 15 минут), поэтому включено по
@@ -127,12 +94,10 @@ def analyze_instrument(instrument: Instrument, include_intraday: bool = True) ->
         except Exception:
             intraday_confirmations = None
 
-    verdict = build_verdict(
-        bundle,
-        consensus_agree=consensus_agree,
-        consensus_detail=consensus_detail,
-        intraday_confirmations=intraday_confirmations,
-    )
+    try:
+        bundle, verdict = analyze_series(series, intraday_confirmations=intraday_confirmations)
+    except ValueError as e:
+        return {"instrument": instrument, "status": "NO_STRUCTURE", "detail": str(e)}
 
     return {"instrument": instrument, "status": "OK", "bundle": bundle, "verdict": verdict}
 
