@@ -116,7 +116,15 @@ def build_digest(results: list[dict]) -> str:
         "",
     ]
     divider = "─" * 24
-    cards = [format_verdict(r["verdict"], symbol=r["instrument"].symbol, display_name=r["instrument"].label) for r in ok]
+    cards = [
+        format_verdict(
+            r["verdict"],
+            symbol=r["instrument"].symbol,
+            display_name=r["instrument"].label,
+            source_tag=r["bundle"].source_tag,
+        )
+        for r in ok
+    ]
     lines.append(f"\n{divider}\n".join(cards))
 
     if problems:

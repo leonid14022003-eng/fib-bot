@@ -56,6 +56,14 @@ def load_binance_top_universe(n: int = 200, market: str = "futures", quote_asset
     Живой запрос к Binance 24hr ticker, топ-N пар по quoteVolume среди пар,
     котируемых в quote_asset (по умолчанию USDT -- самая ликвидная и
     единообразная база для сравнения объёмов между разными монетами).
+
+    ВАЖНО (по прямому запросу Леонида, 5 сентября 2026 -- "чтобы это реально
+    можно было торговать на Binance"): дополнительно сверяется с
+    /fapi/v1/exchangeInfo и берёт ТОЛЬКО пары со status == "TRADING" --
+    24hr ticker сам по себе не гарантирует, что пара торгуется прямо сейчас
+    (могла быть приостановлена/делистнута, а статистика за 24ч -- устаревшей
+    историей). На 5 сентября все топ-200 по объёму и так оказались TRADING,
+    но это была бы случайность, если не проверять явно.
     """
     import requests
 
@@ -64,13 +72,26 @@ def load_binance_top_universe(n: int = 200, market: str = "futures", quote_asset
         if market == "futures"
         else "https://api.binance.com/api/v3/ticker/24hr"
     )
+    exchange_info_url = (
+        "https://fapi.binance.com/fapi/v1/exchangeInfo"
+        if market == "futures"
+        else "https://api.binance.com/api/v3/exchangeInfo"
+    )
+
     resp = requests.get(base_url, timeout=20)
     resp.raise_for_status()
     data = resp.json()
     if not isinstance(data, list):
         raise ValueError(f"Неожиданный ответ Binance 24hr ticker (ожидался массив): {data}")
 
-    filtered = [d for d in data if d["symbol"].endswith(quote_asset)]
+    info_resp = requests.get(exchange_info_url, timeout=20)
+    info_resp.raise_for_status()
+    info = info_resp.json()
+    trading_symbols = {s["symbol"] for s in info.get("symbols", []) if s.get("status") == "TRADING"}
+    if not trading_symbols:
+        raise ValueError(f"Неожиданный ответ Binance exchangeInfo (пустой список TRADING символов): {info}")
+
+    filtered = [d for d in data if d["symbol"].endswith(quote_asset) and d["symbol"] in trading_symbols]
     filtered.sort(key=lambda d: float(d["quoteVolume"]), reverse=True)
     top = filtered[:n]
     return [

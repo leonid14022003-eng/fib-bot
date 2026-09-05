@@ -197,12 +197,24 @@ def build_verdict(
     )
 
 
-def format_verdict(verdict: Verdict, symbol: str, display_name: str | None = None) -> str:
+def format_verdict(
+    verdict: Verdict, symbol: str, display_name: str | None = None, source_tag: str | None = None
+) -> str:
     """HTML-блок для Telegram (тот же parse_mode='HTML', что и format_message
     в dispatch_agent.py) -- независимый от неё, добавляется отдельным
-    сообщением/секцией, не подменяет обязательный формат раздела 24."""
+    сообщением/секцией, не подменяет обязательный формат раздела 24.
+
+    source_tag -- AnalysisBundle.source_tag (тот же честный тег источника,
+    что уже проходит через verification_agent.run_checklist), например
+    "Binance futures klines -- CRYPTO" или "Financial Modeling Prep
+    /stable/historical-price-eod (Starter plan) -- NASDAQ/NYSE (US)".
+    Добавлено 5 сентября 2026 по прямому запросу Леонида -- "чтобы это
+    реально можно было торговать", т.е. каждая карточка сама говорит, где
+    искать этот тикер, а не только называет символ."""
     title = f"{display_name} ({symbol})" if display_name and display_name != symbol else symbol
     lines = [f"🧭 <b>{title}</b> — вердикт аналитика: <b>{verdict.call}</b> {verdict.confidence}"]
+    if source_tag:
+        lines.append(f"📍 Где торговать: {source_tag} · тикер <b>{symbol}</b>")
     if verdict.retracement_pct is not None:
         lines.append(f"Глубина коррекции: {verdict.retracement_pct:.1f}%")
     if verdict.invalidation_price is not None and verdict.target_price is not None:

@@ -98,7 +98,14 @@ def build_opportunity_report(opportunities: list[dict]) -> str:
     header = f"Новые возможности вне текущего списка -- {len(opportunities)}\n{'=' * 60}\n"
     divider = "\n" + "-" * 40 + "\n"
     cards = [
-        _strip_html(format_verdict(r["verdict"], symbol=r["instrument"].symbol, display_name=r["instrument"].label))
+        _strip_html(
+            format_verdict(
+                r["verdict"],
+                symbol=r["instrument"].symbol,
+                display_name=r["instrument"].label,
+                source_tag=r["bundle"].source_tag,
+            )
+        )
         for r in opportunities
     ]
     return header + divider.join(cards)
