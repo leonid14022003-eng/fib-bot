@@ -44,6 +44,7 @@ from agents.dispatch_agent import (
 )
 from agents.intraday_agent import IntradayConfirmation
 from agents.ops_agent import LOG_TAIL_LIMIT, notify_failure
+from analyst_report import TELEGRAM_TEXT_LIMIT, build_digest_messages
 from agents.fibo_agent import (
     Direction,
     FiboLevel,
@@ -1130,6 +1131,47 @@ def test_notify_failure_handles_empty_log():
     result = notify_failure("test_job", "", bot_token=None)
     assert "(лог пуст)" in result["message_preview"], result["message_preview"]
     print("OK  test_notify_failure_handles_empty_log")
+
+
+def _mk_analyst_result(symbol: str, fraction: float = 0.4) -> dict:
+    """Синтетический элемент results[] для build_digest_messages() --
+    та же форма, что и analyze_instrument() возвращает при status='OK'."""
+    bundle = _mk_bundle(fraction=fraction)
+    verdict = build_verdict(bundle)
+    return {"instrument": Instrument(symbol, symbol, "synthetic"), "status": "OK", "bundle": bundle, "verdict": verdict}
+
+
+def test_build_digest_messages_single_message_when_small():
+    results = [_mk_analyst_result("A"), _mk_analyst_result("B")]
+    messages = build_digest_messages(results)
+    assert len(messages) == 1, messages
+    assert "часть" not in messages[0], messages[0]  # префикс страницы не нужен, когда сообщение одно
+    print("OK  test_build_digest_messages_single_message_when_small")
+
+
+def test_build_digest_messages_splits_when_too_long_for_telegram():
+    # 15 инструментов -- ровно то число, на котором реально упал первый
+    # прогон 5 сентября 2026 (единое сообщение 16+ тыс. символов, Telegram
+    # ответил 400 всем троим).
+    results = [_mk_analyst_result(f"SYM{i}") for i in range(15)]
+    messages = build_digest_messages(results)
+    assert len(messages) > 1, "15 инструментов должны были не влезть в одно сообщение"
+    for m in messages:
+        assert len(m) <= TELEGRAM_TEXT_LIMIT, f"сообщение превышает лимит Telegram: {len(m)} символов"
+        assert "часть" in m, m  # при нескольких частях каждая помечена номером
+    print("OK  test_build_digest_messages_splits_when_too_long_for_telegram")
+
+
+def test_build_digest_messages_never_splits_a_single_card():
+    # Каждая карточка целиком должна оказаться внутри РОВНО одного сообщения --
+    # ищем текст конкретного тикера и убеждаемся, что он не размазан.
+    results = [_mk_analyst_result(f"SYM{i}") for i in range(15)]
+    messages = build_digest_messages(results)
+    for i in range(15):
+        symbol = f"SYM{i}"
+        containing = [m for m in messages if f"<b>{symbol}</b>" in m]
+        assert len(containing) == 1, f"{symbol} должен встретиться ровно в одном сообщении, найдено в {len(containing)}"
+    print("OK  test_build_digest_messages_never_splits_a_single_card")
 
 
 if __name__ == "__main__":

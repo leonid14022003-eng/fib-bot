@@ -137,10 +137,14 @@ def analyze_instrument(instrument: Instrument, include_intraday: bool = True) ->
     return {"instrument": instrument, "status": "OK", "bundle": bundle, "verdict": verdict}
 
 
+TELEGRAM_TEXT_LIMIT = 4096  # sendMessage, см. dispatch_agent.py про тот же лимит у format_message()
+
+
 def build_digest(results: list[dict]) -> str:
-    """Один текстовый дайджест по всем инструментам -- заголовок + вердикт
-    на каждый, включая те, что не удалось проанализировать (честно, не
-    молча пропускаем -- регламент, раздел 2)."""
+    """Единый текстовый дайджест (для output/last_analyst_report.txt --
+    локальный файл, лимит Telegram тут не применяется) -- заголовок +
+    вердикт на каждый инструмент, включая те, что не удалось
+    проанализировать (честно, не молча пропускаем -- регламент, раздел 2)."""
     ok = [r for r in results if r["status"] == "OK"]
     problems = [r for r in results if r["status"] != "OK"]
 
@@ -160,6 +164,62 @@ def build_digest(results: list[dict]) -> str:
             lines.append(f"• {r['instrument'].label} [{r['instrument'].symbol}]: {r['status']} -- {r['detail']}")
 
     return "\n".join(lines)
+
+
+def build_digest_messages(results: list[dict]) -> list[str]:
+    """
+    То же содержимое, что и build_digest(), но разбитое на несколько
+    сообщений, каждое СТРОГО в пределах TELEGRAM_TEXT_LIMIT -- 5 сентября
+    2026, по факту первого реального прогона: единое сообщение на 15
+    инструментов (16+ тыс. символов) ВСЕГДА превышает лимит Telegram
+    sendMessage, и Bot API отвечает 400 всем получателям -- отчёт не
+    доходил вообще никому (регламент, раздел 2: сигнал не должен теряться
+    молча).
+
+    Разбиение только МЕЖДУ целыми карточками инструментов -- карточка
+    одного инструмента никогда не режется пополам. Жадная упаковка: карточки
+    добавляются в текущее сообщение, пока не будет превышен лимит, тогда
+    начинается новое.
+    """
+    ok = [r for r in results if r["status"] == "OK"]
+    problems = [r for r in results if r["status"] != "OK"]
+
+    header = (
+        f"📋 <b>Полный анализ -- {len(results)} инструмент(ов)</b>\n"
+        f"Проанализировано: {len(ok)} · Пропущено: {len(problems)}"
+    )
+    divider = "\n" + "─" * 24 + "\n"
+
+    blocks = [
+        format_verdict(r["verdict"], symbol=r["instrument"].symbol, display_name=r["instrument"].label)
+        for r in ok
+    ]
+    if problems:
+        blocks.append(
+            "<b>Пропущено (нет данных/структуры):</b>\n"
+            + "\n".join(
+                f"• {r['instrument'].label} [{r['instrument'].symbol}]: {r['status']} -- {r['detail']}"
+                for r in problems
+            )
+        )
+
+    messages: list[str] = []
+    current = [header]
+    current_len = len(header)
+    for block in blocks:
+        addition = len(divider) + len(block)
+        if current_len + addition > TELEGRAM_TEXT_LIMIT and len(current) > 1:
+            messages.append(divider.join(current))
+            current = [block]
+            current_len = len(block)
+        else:
+            current.append(block)
+            current_len += addition
+    messages.append(divider.join(current))
+
+    if len(messages) > 1:
+        messages = [f"(часть {i + 1}/{len(messages)})\n\n{msg}" for i, msg in enumerate(messages)]
+    return messages
 
 
 def main() -> None:
@@ -201,11 +261,17 @@ def main() -> None:
         Recipient(label="Сергей (@sergikvsl)", telegram_chat_id="1253087193"),
         Recipient(label="Pavel", telegram_chat_id="980723803"),
     ]
-    result = send_via_telegram(digest, recipients, bot_token=bot_token)
+    # Несколько сообщений вместо одного -- см. докстринг build_digest_messages()
+    # про то, почему единое сообщение на 15 инструментов ВСЕГДА превышает
+    # лимит Telegram sendMessage (4096 символов) и не доходит вообще.
+    messages = build_digest_messages(results)
     print()
-    print(f"--- Отправка дайджеста (dry_run={result['dry_run']}) ---")
-    for entry in result["sent_to"]:
-        print(f"  {entry['recipient']}: {entry['status']}")
+    print(f"--- Отправка дайджеста, {len(messages)} сообщени(й) ---")
+    for i, message in enumerate(messages, start=1):
+        result = send_via_telegram(message, recipients, bot_token=bot_token)
+        print(f"  Часть {i}/{len(messages)} (dry_run={result['dry_run']}, {len(message)} символов):")
+        for entry in result["sent_to"]:
+            print(f"    {entry['recipient']}: {entry['status']}")
 
 
 if __name__ == "__main__":
