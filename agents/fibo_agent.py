@@ -295,6 +295,23 @@ def build_global_fibo(series: CandleSeries, extremes_fn=find_global_extremes) ->
     return _build_structure(StructureScope.GLOBAL, direction, point1, point2)
 
 
+def _local_window_series(series: CandleSeries, lookback_bars: int) -> CandleSeries | None:
+    """Последние lookback_bars свечей как отдельный CandleSeries. None, если
+    свечей меньше, чем окно -- честно, а не усечённое окно поменьше."""
+    candles = series.candles
+    if len(candles) < lookback_bars:
+        return None
+    window = candles[-lookback_bars:]
+    return CandleSeries(
+        symbol=series.symbol,
+        exchange_or_source=series.exchange_or_source,
+        timeframe=series.timeframe,
+        candles=window,
+        fetched_via=series.fetched_via,
+        fetch_note=series.fetch_note,
+    )
+
+
 def build_local_fibo(series: CandleSeries, lookback_bars: int) -> FiboStructure | None:
     """
     ЧЕРНОВАЯ реализация локального ФИБО (раздел 7.2). Регламент описывает
@@ -308,23 +325,127 @@ def build_local_fibo(series: CandleSeries, lookback_bars: int) -> FiboStructure 
     сверить с Леонидом, прежде чем полагаться на неё в реальных сигналах.
     Возвращает None, если внутри окна нет структуры, проходящей confirmation.
     """
-    candles = series.candles
-    if len(candles) < lookback_bars:
+    window_series = _local_window_series(series, lookback_bars)
+    if window_series is None:
         return None
-    window = candles[-lookback_bars:]
-    window_series = CandleSeries(
-        symbol=series.symbol,
-        exchange_or_source=series.exchange_or_source,
-        timeframe=series.timeframe,
-        candles=window,
-        fetched_via=series.fetched_via,
-        fetch_note=series.fetch_note,
-    )
     try:
         return build_global_fibo(window_series)  # тот же алгоритм, локальное окно
     except ValueError:
         return None  # структура внутри окна не подтвердилась -- честно вернуть None,
         # а не подставлять что-то приблизительное
+
+
+def _confirmed_extreme_after(candles: list[Candle], after_index: int, kind: str) -> SwingPoint | None:
+    """
+    Самая крайняя точка типа `kind` ("HIGH"/"LOW") СТРОГО ПОСЛЕ
+    candles[after_index], подтверждённая тем же правилом раздела 8-9
+    (минимум MIN_LEFT_BARS свечей слева -- считая от начала ВСЕГО массива
+    candles, тем же способом, что и _confirmed_left() везде в этом модуле).
+    None, если после after_index нет ни одной подтверждённой точки такого
+    типа -- честно, не выдумывает точку (раздел 2).
+    """
+    idxs = [i for i in range(after_index + 1, len(candles)) if _confirmed_left(candles, i, kind)]
+    if not idxs:
+        return None
+    if kind == "HIGH":
+        best = max(idxs, key=lambda i: candles[i].high)
+        c = candles[best]
+        return SwingPoint(dt=c.dt, price=c.high, kind="HIGH", index=best)
+    best = min(idxs, key=lambda i: candles[i].low)
+    c = candles[best]
+    return SwingPoint(dt=c.dt, price=c.low, kind="LOW", index=best)
+
+
+@dataclass(frozen=True)
+class DualDirectionResult:
+    ascending: FiboStructure | None
+    ascending_reason: str | None  # причина None, если ascending отсутствует (раздел 2)
+    descending: FiboStructure | None
+    descending_reason: str | None  # причина None, если descending отсутствует
+
+
+def build_dual_direction_fibo(
+    series: CandleSeries, scope: StructureScope = StructureScope.GLOBAL
+) -> DualDirectionResult:
+    """
+    НОВОЕ, 6 сентября 2026 -- прямой запрос Леонида: "смотрит восходящую/
+    нисходящую ФИБО ... в обе стороны" на каждом ТФ. ЭТО НЕ ПУНКТ РЕГЛАМЕНТА
+    (в claude/fibonacci-reglament.md такого раздела нет) -- это методика,
+    спроектированная здесь по прямому поручению Леонида ("сам подумай как
+    будет лучше и сделай это", тот же разговор). Явно помечено как решение
+    Claude, а не как "давно решённое правило" -- подлежит сверке на реальных
+    сигналах, прежде чем полагаться на неё как на устоявшуюся.
+
+    ПРОБЛЕМА, которую решает: build_global_fibo()/build_local_fibo() дают
+    только ОДНУ структуру на окно -- ту, что образована буквальным max/min
+    всего окна (какая из двух точек раньше по времени, та и становится
+    точкой 1, раздел 11-12). Если в окне уже случилось доминирующее
+    движение (скажем, рост) и ПОСЛЕ него началось самостоятельное встречное
+    движение (откат вниз меньшего масштаба) -- старый алгоритм эту вторую,
+    более свежую структуру никогда не увидит: она банально не образована
+    буквальным глобальным max/min окна.
+
+    Построение (симметрично для обоих направлений, независимо друг от друга):
+      ascending:  point1 = глобальный LOW окна, point2 = самый крайний
+                  подтверждённый HIGH СТРОГО ПОСЛЕ него.
+      descending: point1 = глобальный HIGH окна, point2 = самый крайний
+                  подтверждённый LOW СТРОГО ПОСЛЕ него.
+
+    Если глобальный LOW окна хронологически раньше глобального HIGH --
+    ascending совпадёт с тем, что и так вернул бы build_global_fibo()
+    (та же доминирующая структура, ничего нового). А descending в этом
+    случае -- НОВАЯ структура: "после того как доминирующий рост
+    состоялся, случился ли после него самостоятельный откат вниз, и на
+    сколько он глубок". Симметрично, если доминирующая структура
+    нисходящая -- новой окажется ascending (откат/разворот вверх после
+    минимума).
+
+    ascending/descending = None (с текстовой причиной, а не выдуманным
+    значением), если соответствующая точка 1 не подтвердилась или после
+    неё вообще нет подтверждённой точки противоположного типа -- обе
+    ситуации совершенно нормальны (не каждое окно содержит оба движения).
+
+    Бросает ValueError (как и find_global_extremes()), если ни HIGH, ни LOW
+    всего окна вообще не подтвердились -- тогда точки 1 для обеих сторон
+    нет физически, вызывающий код должен обработать это так же, как и
+    ValueError от build_global_fibo().
+    """
+    candles = series.candles
+    hi, lo = find_global_extremes(series)
+
+    up_point2 = _confirmed_extreme_after(candles, lo.index, "HIGH")
+    if up_point2 is None:
+        ascending, ascending_reason = None, (
+            f"после глобального LOW ({lo.dt}={lo.price}) не нашлось ни одного "
+            f"подтверждённого HIGH -- восходящая структура недоступна в этом окне"
+        )
+    else:
+        ascending, ascending_reason = _build_structure(scope, Direction.ASCENDING, lo, up_point2), None
+
+    down_point2 = _confirmed_extreme_after(candles, hi.index, "LOW")
+    if down_point2 is None:
+        descending, descending_reason = None, (
+            f"после глобального HIGH ({hi.dt}={hi.price}) не нашлось ни одного "
+            f"подтверждённого LOW -- нисходящая структура недоступна в этом окне"
+        )
+    else:
+        descending, descending_reason = _build_structure(scope, Direction.DESCENDING, hi, down_point2), None
+
+    return DualDirectionResult(ascending, ascending_reason, descending, descending_reason)
+
+
+def build_dual_direction_local_fibo(series: CandleSeries, lookback_bars: int) -> DualDirectionResult | None:
+    """Как build_dual_direction_fibo(), но в локальном окне последних
+    lookback_bars баров -- та же идея, что и build_local_fibo() для
+    одиночной структуры. None, если баров не хватает ИЛИ ни HIGH, ни LOW
+    всего окна не подтвердились (честно, не подставляя пустой результат)."""
+    window_series = _local_window_series(series, lookback_bars)
+    if window_series is None:
+        return None
+    try:
+        return build_dual_direction_fibo(window_series, scope=StructureScope.LOCAL)
+    except ValueError:
+        return None
 
 
 def _build_structure(

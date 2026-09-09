@@ -54,7 +54,10 @@ from agents.fibo_agent import (
     FiboStructure,
     StructureScope,
     SwingPoint,
+    build_dual_direction_fibo,
+    build_dual_direction_local_fibo,
     build_global_fibo,
+    build_local_fibo,
     find_fractal_swing_extremes,
     find_global_extremes,
 )
@@ -153,6 +156,106 @@ def test_wick_used_not_close():
     assert hi_point.price == 150, f"Ожидали HIGH=150 (тень), получили {hi_point.price}"
     assert lo_point.price == 60, f"Ожидали LOW=60, получили {lo_point.price}"
     print("OK  test_wick_used_not_close")
+
+
+# --- build_dual_direction_fibo() -- 6 сентября 2026, см. докстринг в fibo_agent.py ---
+
+# idx0-4: филлеры выше глобального LOW, ниже глобального HIGH.
+# idx5: глобальный LOW (10) -- дальше окна ничего ниже не будет.
+# idx6-9: рост к глобальному HIGH.
+# idx10: глобальный HIGH (100) -- дальше окна ничего выше не будет.
+# idx11-14: откат вниз после HIGH.
+# idx15: локальный (не глобальный) LOW отката (40) -- это и есть НОВАЯ,
+#        встречная структура, которую старый build_global_fibo() не видит.
+# idx16-19: частичное восстановление, не ниже 40 -- idx15 остаётся минимумом.
+_ASCENDING_DOMINANT_DATA = [
+    (55, 50), (56, 51), (57, 52), (58, 53), (59, 54),
+    (20, 10),
+    (40, 25), (55, 35), (70, 45), (85, 60),
+    (100, 90),
+    (85, 70), (75, 60), (65, 50), (58, 45),
+    (50, 40),
+    (60, 48), (70, 55), (80, 65), (90, 75),
+]
+
+
+def test_dual_direction_ascending_dominant_matches_global_fibo():
+    series = _mk_series(_ASCENDING_DOMINANT_DATA)
+    result = build_dual_direction_fibo(series)
+    dominant = build_global_fibo(series)
+    assert result.ascending is not None, result.ascending_reason
+    assert result.ascending.direction == Direction.ASCENDING
+    assert result.ascending.point1.price == dominant.point1.price == 10
+    assert result.ascending.point2.price == dominant.point2.price == 100
+    print("OK  test_dual_direction_ascending_dominant_matches_global_fibo")
+
+
+def test_dual_direction_finds_new_countertrend_after_dominant_high():
+    series = _mk_series(_ASCENDING_DOMINANT_DATA)
+    result = build_dual_direction_fibo(series)
+    assert result.descending is not None, result.descending_reason
+    assert result.descending.direction == Direction.DESCENDING
+    assert result.descending.point1.price == 100, "point1 встречной структуры -- та же вершина (100)"
+    assert result.descending.point2.price == 40, "point2 встречной структуры -- НОВЫЙ локальный минимум отката (40), не глобальный (10)"
+    print("OK  test_dual_direction_finds_new_countertrend_after_dominant_high")
+
+
+# Зеркало предыдущего сценария: HIGH раньше (глобальный), LOW позже
+# (глобальный) -> доминирующая структура нисходящая, а встречная (новая)
+# структура -- восходящий отскок после глобального минимума.
+_DESCENDING_DOMINANT_DATA = [(round(110 - lo, 2), round(110 - hi, 2)) for hi, lo in _ASCENDING_DOMINANT_DATA]
+
+
+def test_dual_direction_descending_dominant_finds_new_ascending_countertrend():
+    series = _mk_series(_DESCENDING_DOMINANT_DATA)
+    result = build_dual_direction_fibo(series)
+    dominant = build_global_fibo(series)
+    assert dominant.direction == Direction.DESCENDING, dominant.direction
+    assert result.descending is not None, result.descending_reason
+    assert result.descending.point1.price == dominant.point1.price == 100
+    assert result.descending.point2.price == dominant.point2.price == 10
+    assert result.ascending is not None, result.ascending_reason
+    assert result.ascending.point1.price == 10, "point1 встречной структуры -- тот же минимум (10)"
+    assert result.ascending.point2.price == 70, "point2 встречной структуры -- НОВЫЙ локальный отскок (70), не глобальный (100)"
+    print("OK  test_dual_direction_descending_dominant_finds_new_ascending_countertrend")
+
+
+def test_dual_direction_none_with_reason_when_nothing_after_extreme():
+    # Обрезаем ровно на глобальном HIGH (idx10) -- после него в окне вообще
+    # ничего нет, значит встречной (descending) структуре взяться неоткуда.
+    series = _mk_series(_ASCENDING_DOMINANT_DATA[:11])
+    result = build_dual_direction_fibo(series)
+    assert result.ascending is not None, result.ascending_reason
+    assert result.descending is None
+    assert result.descending_reason and "HIGH" in result.descending_reason
+    print("OK  test_dual_direction_none_with_reason_when_nothing_after_extreme")
+
+
+def test_dual_direction_raises_when_no_confirmed_extremes():
+    data = [(105, 100), (102, 50)] + [(105, 100)] * 10  # тот же фикстур, что и у ValueError-теста выше
+    series = _mk_series(data)
+    try:
+        build_dual_direction_fibo(series)
+        raised = False
+    except ValueError:
+        raised = True
+    assert raised, "Ожидали ValueError, как и у find_global_extremes()"
+    print("OK  test_dual_direction_raises_when_no_confirmed_extremes")
+
+
+def test_dual_direction_local_none_when_not_enough_bars():
+    series = _mk_series(_ASCENDING_DOMINANT_DATA)
+    assert build_dual_direction_local_fibo(series, lookback_bars=100) is None
+    print("OK  test_dual_direction_local_none_when_not_enough_bars")
+
+
+def test_dual_direction_local_matches_full_window_result():
+    series = _mk_series(_ASCENDING_DOMINANT_DATA)
+    local_result = build_dual_direction_local_fibo(series, lookback_bars=len(_ASCENDING_DOMINANT_DATA))
+    full_result = build_dual_direction_fibo(series, scope=StructureScope.LOCAL)
+    assert local_result.ascending.point1.price == full_result.ascending.point1.price
+    assert local_result.descending.point2.price == full_result.descending.point2.price
+    print("OK  test_dual_direction_local_matches_full_window_result")
 
 
 def test_cross_check_agrees_on_identical_structure():
