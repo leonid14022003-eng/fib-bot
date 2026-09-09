@@ -151,7 +151,16 @@ def load_fmp_daily(
         "to": today.isoformat(),
     }
     resp = requests.get(url, params=params, timeout=20)
-    resp.raise_for_status()
+    try:
+        resp.raise_for_status()
+    except requests.exceptions.HTTPError as e:
+        # НЕ str(e) и не e.response.url -- requests кладёт туда полный URL
+        # запроса, включая ?apikey=... в открытом виде (реальный инцидент,
+        # 9 сентября 2026: ключ утёк в чат через текст такого исключения).
+        # Текст ошибки строим только из status_code и тела ответа.
+        raise ValueError(
+            f"FMP HTTP {resp.status_code} для {symbol}: {resp.text[:300]}"
+        ) from None
     payload = resp.json()
     if not isinstance(payload, list):
         # FMP отдаёт ошибки как {"Error Message": "..."} -- бросаем как есть,
@@ -381,7 +390,13 @@ def load_fmp_intraday(
     url = f"https://financialmodelingprep.com/stable/historical-chart/{interval}"
     params = {"symbol": symbol, "apikey": api_key}
     resp = requests.get(url, params=params, timeout=20)
-    resp.raise_for_status()
+    try:
+        resp.raise_for_status()
+    except requests.exceptions.HTTPError as e:
+        # См. load_fmp_daily выше -- НЕ str(e)/resp.url, там открытым текстом apikey.
+        raise ValueError(
+            f"FMP HTTP {resp.status_code} для {interval} {symbol}: {resp.text[:300]}"
+        ) from None
     payload = resp.json()
 
     if isinstance(payload, dict):
@@ -455,6 +470,80 @@ def load_fmp_intraday(
         candles=candles,
         fetched_via="requests.get (прямой HTTP, без суммаризирующего слоя)",
         fetch_note=f"Запрошено {days_back} дней назад, получено {len(candles)} свечей после отсечки",
+    )
+
+
+def resample_candles(series: CandleSeries, rule: str) -> CandleSeries:
+    """
+    Строит недельные ("1W") или месячные ("1M") свечи из уже полученного
+    ДНЕВНОГО series -- НЕ делает никакого нового сетевого запроса. Нужно для
+    многотаймфреймового каскада (Леонид, 6 сентября 2026: "ИИ берёт актив,
+    начинает анализ с месячного графика... не находит цену возле нужного
+    уровня -- переключается на недельный... на дневной"). Месяц/неделя не
+    требуют отдельного похода к FMP -- ресемплинг того, что и так уже
+    скачано load_fmp_daily() (до 5 лет дневных свечей), поэтому эта функция
+    не расходует лимит FMP вообще.
+
+    rule="1W": ISO-неделя (Пн..Вс, по series.candles[i].dt.isocalendar()).
+    rule="1M": календарный месяц (год, месяц).
+
+    Группировка: open = open первой свечи периода, close = close последней,
+    high/low = max/min по периоду, volume = сумма. dt периода = дата
+    ПОСЛЕДНЕЙ свечи, вошедшей в него (не дата закрытия периода календарно --
+    если данные обрываются в середине недели/месяца, это честно видно по
+    dt последней частичной свечи, а не выдумывается вперёд).
+
+    Последний период в результате может быть НЕПОЛНЫМ (неделя/месяц ещё
+    идёт) -- это ожидаемо и совпадает с тем, что смысл нужен: "текущая цена"
+    для сравнения с уровнями всегда берётся с последней свечи (см.
+    scan_instrument() в screener.py), а не с завершённого бара.
+
+    Бросает ValueError, если rule не "1W"/"1M" или series.candles пуст --
+    не подставляет пустой результат молча (регламент, раздел 2).
+    """
+    if rule not in ("1W", "1M"):
+        raise ValueError(f"Неподдерживаемое правило ресемплинга: {rule!r} (ожидается '1W' или '1M')")
+    candles = series.candles
+    if not candles:
+        raise ValueError("Нечего ресемплировать -- series.candles пуст")
+
+    def bucket_key(c: Candle):
+        if rule == "1W":
+            iso = c.dt.isocalendar()
+            return (iso[0], iso[1])  # (ISO-год, ISO-неделя)
+        return (c.dt.year, c.dt.month)
+
+    resampled: list[Candle] = []
+    current_key = None
+    group: list[Candle] = []
+    for c in candles:
+        key = bucket_key(c)
+        if key != current_key and group:
+            resampled.append(_merge_bucket(group))
+            group = []
+        current_key = key
+        group.append(c)
+    if group:
+        resampled.append(_merge_bucket(group))
+
+    return CandleSeries(
+        symbol=series.symbol,
+        exchange_or_source=series.exchange_or_source,
+        timeframe=rule,
+        candles=resampled,
+        fetched_via=f"resample_candles({rule}) поверх {series.fetched_via}",
+        fetch_note=f"Ресемплировано локально из {len(candles)} дневных свечей, без нового запроса к источнику",
+    )
+
+
+def _merge_bucket(group: list[Candle]) -> Candle:
+    return Candle(
+        dt=group[-1].dt,
+        open=group[0].open,
+        high=max(c.high for c in group),
+        low=min(c.low for c in group),
+        close=group[-1].close,
+        volume=sum(c.volume for c in group),
     )
 
 
