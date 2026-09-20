@@ -1,0 +1,5582 @@
+{
+  "summary": {
+    "checked_at": "2026-09-08",
+    "binance_contracts": 191,
+    "binance_trading": 191,
+    "bybit_trading_tradfi": 236,
+    "bybit_already_on_binance": 177,
+    "new_bybit_underlyings": 59,
+    "new_types": {
+      "Акция / депозитарная расписка": 43,
+      "ETF / биржевой фонд": 13,
+      "Валютная пара": 3
+    },
+    "total_unique_underlyings": 248,
+    "total_public_underlyings": 246,
+    "pending_bybit_only": 1
+  },
+  "instruments": [
+    {
+      "asset_key": "Товарный рынок:XAU/USD",
+      "underlying_ticker": "XAU/USD",
+      "market": "Товарный рынок",
+      "asset_name": "Золото",
+      "asset_type": "Сырьё",
+      "chart_currency": "USD",
+      "mapping_status": "underlying_mapped_series_pending",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "XAUUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "XAUUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "Товарный рынок:XAG/USD",
+      "underlying_ticker": "XAG/USD",
+      "market": "Товарный рынок",
+      "asset_name": "Серебро",
+      "asset_type": "Сырьё",
+      "chart_currency": "USD",
+      "mapping_status": "underlying_mapped_series_pending",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "XAGUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "XAGUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:TSLA",
+      "underlying_ticker": "TSLA",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "TSLAUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "TSLAUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "Товарный рынок:XPT/USD",
+      "underlying_ticker": "XPT/USD",
+      "market": "Товарный рынок",
+      "asset_name": "Платина",
+      "asset_type": "Сырьё",
+      "chart_currency": "USD",
+      "mapping_status": "underlying_mapped_series_pending",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "XPTUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "Товарный рынок:XPD/USD",
+      "underlying_ticker": "XPD/USD",
+      "market": "Товарный рынок",
+      "asset_name": "Палладий",
+      "asset_type": "Сырьё",
+      "chart_currency": "USD",
+      "mapping_status": "underlying_mapped_series_pending",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "XPDUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:INTC",
+      "underlying_ticker": "INTC",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "INTCUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "INTCUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:HOOD",
+      "underlying_ticker": "HOOD",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "HOODUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "HOODUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:MSTR",
+      "underlying_ticker": "MSTR",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "MSTRUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "MSTRUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:AMZN",
+      "underlying_ticker": "AMZN",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "AMZNUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "AMZNUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:CRCL",
+      "underlying_ticker": "CRCL",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "CRCLUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "CRCLUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:COIN",
+      "underlying_ticker": "COIN",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "COINUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "COINUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:PLTR",
+      "underlying_ticker": "PLTR",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "PLTRUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "PLTRUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "Товарный рынок:Copper (HG)",
+      "underlying_ticker": "Copper (HG)",
+      "market": "Товарный рынок",
+      "asset_name": "Медь",
+      "asset_type": "Сырьё",
+      "chart_currency": "USD",
+      "mapping_status": "underlying_mapped_series_pending",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "COPPERUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:EWY",
+      "underlying_ticker": "EWY",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "ETF / биржевой фонд",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "EWYUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "EWYUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:EWJ",
+      "underlying_ticker": "EWJ",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "ETF / биржевой фонд",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "EWJUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "EWJUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:PAYP",
+      "underlying_ticker": "PAYP",
+      "market": "US",
+      "asset_name": "PayPay",
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "PAYPUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:META",
+      "underlying_ticker": "META",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "METAUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "METAUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:NVDA",
+      "underlying_ticker": "NVDA",
+      "market": "US",
+      "asset_name": "NVIDIA",
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "NVDAUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "NVDAUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:GOOGL",
+      "underlying_ticker": "GOOGL",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "GOOGLUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "GOOGLUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "Товарный рынок:WTI (CL)",
+      "underlying_ticker": "WTI (CL)",
+      "market": "Товарный рынок",
+      "asset_name": "Нефть WTI",
+      "asset_type": "Сырьё",
+      "chart_currency": "USD",
+      "mapping_status": "underlying_mapped_series_pending",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "CLUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "CLUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "Товарный рынок:Brent (BZ/BRN)",
+      "underlying_ticker": "Brent (BZ/BRN)",
+      "market": "Товарный рынок",
+      "asset_name": "Нефть Brent",
+      "asset_type": "Сырьё",
+      "chart_currency": "USD",
+      "mapping_status": "underlying_mapped_series_pending",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "BZUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "BZUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "Товарный рынок:Henry Hub (NG)",
+      "underlying_ticker": "Henry Hub (NG)",
+      "market": "Товарный рынок",
+      "asset_name": "Природный газ Henry Hub",
+      "asset_type": "Сырьё",
+      "chart_currency": "USD",
+      "mapping_status": "underlying_mapped_series_pending",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "NATGASUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:QQQ",
+      "underlying_ticker": "QQQ",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "ETF / биржевой фонд",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "QQQUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "QQQUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:SPY",
+      "underlying_ticker": "SPY",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "ETF / биржевой фонд",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "SPYUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "SPYUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:AAPL",
+      "underlying_ticker": "AAPL",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "AAPLUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "AAPLUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:TSM",
+      "underlying_ticker": "TSM",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "TSMUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "TSMUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:MU",
+      "underlying_ticker": "MU",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "MUUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "MUUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:SNDK",
+      "underlying_ticker": "SNDK",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "SNDKUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "SNDKUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:MSFT",
+      "underlying_ticker": "MSFT",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "MSFTUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "MSFTUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:AVGO",
+      "underlying_ticker": "AVGO",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "AVGOUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "AVGOUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:BABA",
+      "underlying_ticker": "BABA",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "BABAUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "BABAUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:AMD",
+      "underlying_ticker": "AMD",
+      "market": "US",
+      "asset_name": "Advanced Micro Devices",
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "AMDUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "AMDSTOCKUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:QCOM",
+      "underlying_ticker": "QCOM",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "QCOMUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "QCOMUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:USAR",
+      "underlying_ticker": "USAR",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "USARUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "USARUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:LITE",
+      "underlying_ticker": "LITE",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "LITEUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "LITEUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:ORCL",
+      "underlying_ticker": "ORCL",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "ORCLUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "ORCLUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:DIS",
+      "underlying_ticker": "DIS",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "DISUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:UBER",
+      "underlying_ticker": "UBER",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "UBERUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "UBERUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:CSCO",
+      "underlying_ticker": "CSCO",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "CSCOUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "CSCOUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:HD",
+      "underlying_ticker": "HD",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "HDUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "HDUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:SOXL",
+      "underlying_ticker": "SOXL",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "ETF / биржевой фонд",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "SOXLUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "SOXLUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:MRVL",
+      "underlying_ticker": "MRVL",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "MRVLUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "MRVLUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:CRWV",
+      "underlying_ticker": "CRWV",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "CRWVUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "CRWVUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:WMT",
+      "underlying_ticker": "WMT",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "WMTUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "WMTUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:JPM",
+      "underlying_ticker": "JPM",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "JPMUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "JPMUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:V",
+      "underlying_ticker": "V",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "VUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "VUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:BRK.B",
+      "underlying_ticker": "BRK.B",
+      "market": "US",
+      "asset_name": "Berkshire Hathaway — класс B",
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "BRKBUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "BRKBUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:FLNC",
+      "underlying_ticker": "FLNC",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "FLNCUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "FLNCUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:DRAM",
+      "underlying_ticker": "DRAM",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "ETF / биржевой фонд",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "DRAMUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "DRAMUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:RKLB",
+      "underlying_ticker": "RKLB",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "RKLBUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "RKLBUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:CBRS",
+      "underlying_ticker": "CBRS",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "CBRSUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "CBRSUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:SPCX",
+      "underlying_ticker": "SPCX",
+      "market": "US",
+      "asset_name": "SpaceX",
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "SPCXUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "SPCXUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Binance",
+          "symbol": "SPCXUSD1",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "Pre-IPO:OPENAI",
+      "underlying_ticker": null,
+      "market": "Pre-IPO",
+      "asset_name": "OpenAI",
+      "asset_type": "Pre-IPO",
+      "chart_currency": "USD",
+      "mapping_status": "no_public_underlying_chart",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "OPENAIUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "OPENAIUSDT",
+          "status": "PreLaunch",
+          "product": "Pre-market TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:NBIS",
+      "underlying_ticker": "NBIS",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "NBISUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "NBISUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:WDC",
+      "underlying_ticker": "WDC",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "WDCUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "WDCUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:ARM",
+      "underlying_ticker": "ARM",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "ARMUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "ARMUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:BE",
+      "underlying_ticker": "BE",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "BEUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "BEUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:COHR",
+      "underlying_ticker": "COHR",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "COHRUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "COHRUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:QNT",
+      "underlying_ticker": "QNT",
+      "market": "US",
+      "asset_name": "Quantinuum",
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "QNTXUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "QNTXUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:LLY",
+      "underlying_ticker": "LLY",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "LLYUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "LLYUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:NVO",
+      "underlying_ticker": "NVO",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "NVOUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "NVOUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:BB",
+      "underlying_ticker": "BB",
+      "market": "US",
+      "asset_name": "BlackBerry",
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "BBXUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "BBXUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:NOK",
+      "underlying_ticker": "NOK",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "NOKUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "NOKIAUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:EWT",
+      "underlying_ticker": "EWT",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "ETF / биржевой фонд",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "EWTUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "EWTUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:ASTS",
+      "underlying_ticker": "ASTS",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "ASTSUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "ASTSUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "KRX:000660",
+      "underlying_ticker": "000660",
+      "market": "KRX",
+      "asset_name": "SK hynix",
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "KRW",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "SKHYNIXUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "SKHYNIXUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "KRX:005930",
+      "underlying_ticker": "005930",
+      "market": "KRX",
+      "asset_name": "Samsung Electronics",
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "KRW",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "SAMSUNGUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "SAMSUNGUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "KRX:005380",
+      "underlying_ticker": "005380",
+      "market": "KRX",
+      "asset_name": "Hyundai Motor",
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "KRW",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "HYUNDAIUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "HYUNDAIUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "Pre-IPO:ANTHROPIC",
+      "underlying_ticker": null,
+      "market": "Pre-IPO",
+      "asset_name": "Anthropic",
+      "asset_type": "Pre-IPO",
+      "chart_currency": "USD",
+      "mapping_status": "no_public_underlying_chart",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "ANTHROPICUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "ANTHROPICUSDT",
+          "status": "PreLaunch",
+          "product": "Pre-market TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:DELL",
+      "underlying_ticker": "DELL",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "DELLUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "DELLUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:IBM",
+      "underlying_ticker": "IBM",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "IBMUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "IBMUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:NOW",
+      "underlying_ticker": "NOW",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "NOWUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "NOWUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:CRM",
+      "underlying_ticker": "CRM",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "CRMUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "CRMUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:IREN",
+      "underlying_ticker": "IREN",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "IRENUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "IRENUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:ONDS",
+      "underlying_ticker": "ONDS",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "ONDSUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "ONDSUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:BX",
+      "underlying_ticker": "BX",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "BXUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "BXUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:HPE",
+      "underlying_ticker": "HPE",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "HPEUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "HPEUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:AMAT",
+      "underlying_ticker": "AMAT",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "AMATUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "AMATUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:CRWD",
+      "underlying_ticker": "CRWD",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "CRWDUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "CRWDUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:CRDO",
+      "underlying_ticker": "CRDO",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "CRDOUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "CRDOUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:AAOI",
+      "underlying_ticker": "AAOI",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "AAOIUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "AAOIUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:IWM",
+      "underlying_ticker": "IWM",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "ETF / биржевой фонд",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "IWMUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "IWMUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:AXTI",
+      "underlying_ticker": "AXTI",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "AXTIUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "AXTIUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:NFLX",
+      "underlying_ticker": "NFLX",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "NFLXUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "NFLXUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:COST",
+      "underlying_ticker": "COST",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "COSTUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "COSTUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:URNM",
+      "underlying_ticker": "URNM",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "ETF / биржевой фонд",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "URNMUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:HIMS",
+      "underlying_ticker": "HIMS",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "HIMSUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "HIMSUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:EBAY",
+      "underlying_ticker": "EBAY",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "EBAYUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "EBAYUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:ZM",
+      "underlying_ticker": "ZM",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "ZMUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "ZMUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:DKNG",
+      "underlying_ticker": "DKNG",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "DKNGUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "DKNGUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:RIVN",
+      "underlying_ticker": "RIVN",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "RIVNUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "RIVNUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:GME",
+      "underlying_ticker": "GME",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "GMEUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "GMESTOCKUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:XLE",
+      "underlying_ticker": "XLE",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "ETF / биржевой фонд",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "XLEUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "XLEUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:EWZ",
+      "underlying_ticker": "EWZ",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "ETF / биржевой фонд",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "EWZUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "EWZUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:BMNR",
+      "underlying_ticker": "BMNR",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "BMNRUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "BMNRUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:UVXY",
+      "underlying_ticker": "UVXY",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "ETF / биржевой фонд",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "UVXYUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "UVXYUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:ADBE",
+      "underlying_ticker": "ADBE",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "ADBEUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "ADBEUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:GLW",
+      "underlying_ticker": "GLW",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "GLWUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "GLWUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:STX",
+      "underlying_ticker": "STX",
+      "market": "US",
+      "asset_name": "Seagate",
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "STXXUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "STXXUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:ASML",
+      "underlying_ticker": "ASML",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "ASMLUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "ASMLUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:LRCX",
+      "underlying_ticker": "LRCX",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "LRCXUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "LRCXUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:KLAC",
+      "underlying_ticker": "KLAC",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "KLACUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "KLACUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:ALAB",
+      "underlying_ticker": "ALAB",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "ALABUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "ALABUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:SMCI",
+      "underlying_ticker": "SMCI",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "SMCIUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "SMCIUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:CIEN",
+      "underlying_ticker": "CIEN",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "CIENUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "CIENUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:KORU",
+      "underlying_ticker": "KORU",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "ETF / биржевой фонд",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "KORUUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "KORUUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:SONY",
+      "underlying_ticker": "SONY",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "SONYUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "SONYUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:MVLL",
+      "underlying_ticker": "MVLL",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "ETF / биржевой фонд",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "MVLLUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "MVLLUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:TQQQ",
+      "underlying_ticker": "TQQQ",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "ETF / биржевой фонд",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "TQQQUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "TQQQUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:SQQQ",
+      "underlying_ticker": "SQQQ",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "ETF / биржевой фонд",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "SQQQUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "SQQQUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:STRC",
+      "underlying_ticker": "STRC",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "Привилегированная акция",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "STRCUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:CAT",
+      "underlying_ticker": "CAT",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "CATUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "CATSTOCKUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:TXN",
+      "underlying_ticker": "TXN",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "TXNUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "TXNUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:FLEX",
+      "underlying_ticker": "FLEX",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "FLEXUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "FLEXUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:TER",
+      "underlying_ticker": "TER",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "TERUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "TERUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:TTWO",
+      "underlying_ticker": "TTWO",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "TTWOUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "TTWOUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:KSTR",
+      "underlying_ticker": "KSTR",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "ETF / биржевой фонд",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "KSTRUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "KSTRUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:BSP",
+      "underlying_ticker": "BSP",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "BSPUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "BSPUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:BOT",
+      "underlying_ticker": "BOT",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "BOTUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "BOTUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:WEN",
+      "underlying_ticker": "WEN",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "WENUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "WENSTOCKUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:INTW",
+      "underlying_ticker": "INTW",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "ETF / биржевой фонд",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "INTWUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "INTWUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:SNXX",
+      "underlying_ticker": "SNXX",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "ETF / биржевой фонд",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "SNXXUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "SNXXUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:XBI",
+      "underlying_ticker": "XBI",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "ETF / биржевой фонд",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "XBIUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "XBIUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:BNC",
+      "underlying_ticker": "BNC",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "BNCUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "BNCUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:FWDI",
+      "underlying_ticker": "FWDI",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "FWDIUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "FWDIUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:GEV",
+      "underlying_ticker": "GEV",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "GEVUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "GEVUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:VRT",
+      "underlying_ticker": "VRT",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "VRTUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "VRTUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:SNOW",
+      "underlying_ticker": "SNOW",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "SNOWUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "SNOWUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:APP",
+      "underlying_ticker": "APP",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "APPUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "APPSTOCKUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:SKHY",
+      "underlying_ticker": "SKHY",
+      "market": "US",
+      "asset_name": "SK hynix ADR",
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "SKHYUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "SKHYUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:MUU",
+      "underlying_ticker": "MUU",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "ETF / биржевой фонд",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "MUUUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "MUUUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:SOXS",
+      "underlying_ticker": "SOXS",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "ETF / биржевой фонд",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "SOXSUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "SOXSUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:TZA",
+      "underlying_ticker": "TZA",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "ETF / биржевой фонд",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "TZAUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "TZAUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "HKEX:0100",
+      "underlying_ticker": "0100",
+      "market": "HKEX",
+      "asset_name": "MiniMax",
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "HKD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "MINIMAXUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "MINIMAXUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "HKEX:2513",
+      "underlying_ticker": "2513",
+      "market": "HKEX",
+      "asset_name": "Zhipu AI",
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "HKD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "ZHIPUUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "ZHIPUUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "HKEX:0700",
+      "underlying_ticker": "0700",
+      "market": "HKEX",
+      "asset_name": "Tencent",
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "HKD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "HK0700USDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "TENCENTUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Binance",
+          "symbol": "TENCENTUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "HKEX:1810",
+      "underlying_ticker": "1810",
+      "market": "HKEX",
+      "asset_name": "Xiaomi",
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "HKD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "HK1810USDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "XIAOMIUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:SHAZ",
+      "underlying_ticker": "SHAZ",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "SHAZUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "SHAZUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:SOFI",
+      "underlying_ticker": "SOFI",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "SOFIUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "SOFIUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:PANW",
+      "underlying_ticker": "PANW",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "PANWUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "PANWUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:PENG",
+      "underlying_ticker": "PENG",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "PENGUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "PENGSTOCKUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "HKEX:9992",
+      "underlying_ticker": "9992",
+      "market": "HKEX",
+      "asset_name": "Pop Mart",
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "HKD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "POPMARTUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "POPMARTUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:TMF",
+      "underlying_ticker": "TMF",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "ETF / биржевой фонд",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "TMFUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "TMFUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:TBT",
+      "underlying_ticker": "TBT",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "ETF / биржевой фонд",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "TBTUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "TBTUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:BITO",
+      "underlying_ticker": "BITO",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "ETF / биржевой фонд",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "BITOUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "BITOUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:PYPL",
+      "underlying_ticker": "PYPL",
+      "market": "US",
+      "asset_name": "PayPal",
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "PYPLUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "PYPLUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:GS",
+      "underlying_ticker": "GS",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "GSUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "GSUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:SMH",
+      "underlying_ticker": "SMH",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "ETF / биржевой фонд",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "SMHUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "SMHUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "HKEX:3986",
+      "underlying_ticker": "3986",
+      "market": "HKEX",
+      "asset_name": "GigaDevice — H shares",
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "HKD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "GIGADEVUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "GIGADEVICEUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:KO",
+      "underlying_ticker": "KO",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "KOUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "KOUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:RDDT",
+      "underlying_ticker": "RDDT",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "RDDTUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "RDDTUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "HKEX:1024",
+      "underlying_ticker": "1024",
+      "market": "HKEX",
+      "asset_name": "Kuaishou",
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "HKD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "KUAISHOUUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "KUAISHOUUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "HKEX:3690",
+      "underlying_ticker": "3690",
+      "market": "HKEX",
+      "asset_name": "Meituan",
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "HKD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "MEITUANUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "MEITUANUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "HKEX:7709",
+      "underlying_ticker": "7709",
+      "market": "HKEX",
+      "asset_name": "CSOP SK Hynix Daily Max (2X)",
+      "asset_type": "Плечевой биржевой продукт",
+      "chart_currency": "HKD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "CSOPSKHYNIX2LUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "CSOPSKHYNIX2LUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "HKEX:7747",
+      "underlying_ticker": "7747",
+      "market": "HKEX",
+      "asset_name": "CSOP Samsung Electronics Daily Max (2X)",
+      "asset_type": "Плечевой биржевой продукт",
+      "chart_currency": "HKD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "CSOPSAMSUNG2LUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "CSOPSAMSUNG2LUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "HKEX:3308",
+      "underlying_ticker": "3308",
+      "market": "HKEX",
+      "asset_name": "Zhongji Innolight — H shares",
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "HKD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "ZHONGJIUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "ZHONGJIUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "KRX:009150",
+      "underlying_ticker": "009150",
+      "market": "KRX",
+      "asset_name": "Samsung Electro-Mechanics",
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "KRW",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "SAMSUNGEMUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "SAMSUNGEMUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "KRX:042700",
+      "underlying_ticker": "042700",
+      "market": "KRX",
+      "asset_name": "Hanmi Semiconductor",
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "KRW",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "HANMIUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "HANMIUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "KRX:066570",
+      "underlying_ticker": "066570",
+      "market": "KRX",
+      "asset_name": "LG Electronics",
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "KRW",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "LGELECTRONICSUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "LGELECTRONICSUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "KRX:035420",
+      "underlying_ticker": "035420",
+      "market": "KRX",
+      "asset_name": "NAVER",
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "KRW",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "NAVERUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "NAVERUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "KRX:069500",
+      "underlying_ticker": "069500",
+      "market": "KRX",
+      "asset_name": "KODEX 200 ETF",
+      "asset_type": "ETF / биржевой фонд",
+      "chart_currency": "KRW",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "KODEX200USDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "KODEX200USDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:GDX",
+      "underlying_ticker": "GDX",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "ETF / биржевой фонд",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "GDXUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "GDXUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:NET",
+      "underlying_ticker": "NET",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "NETUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "NETUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:VST",
+      "underlying_ticker": "VST",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "VSTUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "VSTUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:SHOP",
+      "underlying_ticker": "SHOP",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "SHOPUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "SHOPUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:LYTE",
+      "underlying_ticker": "LYTE",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "ETF / биржевой фонд",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "LYTEUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "LYTEUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "SSE:688825",
+      "underlying_ticker": "688825",
+      "market": "SSE",
+      "asset_name": "CXMT",
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "CNY",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "CXMTUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "CXMTUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "SSE:688836",
+      "underlying_ticker": "688836",
+      "market": "SSE",
+      "asset_name": "Unitree Robotics",
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "CNY",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "UNITREEUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "UNITREEUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:SKUU",
+      "underlying_ticker": "SKUU",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "ETF / биржевой фонд",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "SKUUUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "SKUUUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:SKDD",
+      "underlying_ticker": "SKDD",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "ETF / биржевой фонд",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "SKDDUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "SKDDUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:RAM",
+      "underlying_ticker": "RAM",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "ETF / биржевой фонд",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "RAMUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "RAMUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:DJT",
+      "underlying_ticker": "DJT",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "DJTUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "DJTUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:MRNA",
+      "underlying_ticker": "MRNA",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "MRNAUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "MRNAUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:TEM",
+      "underlying_ticker": "TEM",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "TEMUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "TEMUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:MRK",
+      "underlying_ticker": "MRK",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "MRKUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "MRKUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:IONQ",
+      "underlying_ticker": "IONQ",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "IONQUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "IONQUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:MARA",
+      "underlying_ticker": "MARA",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "MARAUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "MARAUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:PDD",
+      "underlying_ticker": "PDD",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "PDDUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "PDDUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "HKEX:0625",
+      "underlying_ticker": "0625",
+      "market": "HKEX",
+      "asset_name": "SHEIN",
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "HKD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "HK0625USDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "SHEINUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:NVDL",
+      "underlying_ticker": "NVDL",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "ETF / биржевой фонд",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "NVDLUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "NVDLUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:TSLL",
+      "underlying_ticker": "TSLL",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "ETF / биржевой фонд",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "TSLLUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "TSLLUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:DDOG",
+      "underlying_ticker": "DDOG",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "DDOGUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "DDOGUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:TEAM",
+      "underlying_ticker": "TEAM",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "TEAMUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "TEAMUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:MDB",
+      "underlying_ticker": "MDB",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "MDBUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "MDBUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:ZS",
+      "underlying_ticker": "ZS",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "ZSUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:GTLB",
+      "underlying_ticker": "GTLB",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "GTLBUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:GPRO",
+      "underlying_ticker": "GPRO",
+      "market": "US",
+      "asset_name": null,
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "GPROUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "GPROUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "HKEX:1211",
+      "underlying_ticker": "1211",
+      "market": "HKEX",
+      "asset_name": "BYD — H shares",
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "HKD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "BYDUSDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "BYDUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "HKEX:0992",
+      "underlying_ticker": "0992",
+      "market": "HKEX",
+      "asset_name": "Lenovo",
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "HKD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Binance",
+          "symbol": "HK0992USDT",
+          "status": "TRADING",
+          "product": "TradFi perpetual"
+        },
+        {
+          "exchange": "Bybit",
+          "symbol": "LENOVOUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:AAL",
+      "underlying_ticker": "AAL",
+      "market": "US",
+      "asset_name": "American Airlines Group",
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Bybit",
+          "symbol": "AALUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:ADI",
+      "underlying_ticker": "ADI",
+      "market": "US",
+      "asset_name": "Analog Devices",
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Bybit",
+          "symbol": "ADIUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:AEHR",
+      "underlying_ticker": "AEHR",
+      "market": "US",
+      "asset_name": "Aehr Test Systems",
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Bybit",
+          "symbol": "AEHRUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:AMC",
+      "underlying_ticker": "AMC",
+      "market": "US",
+      "asset_name": "AMC Entertainment",
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Bybit",
+          "symbol": "AMCUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:AMGN",
+      "underlying_ticker": "AMGN",
+      "market": "US",
+      "asset_name": "Amgen",
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Bybit",
+          "symbol": "AMGNUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:ANET",
+      "underlying_ticker": "ANET",
+      "market": "US",
+      "asset_name": "Arista Networks",
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Bybit",
+          "symbol": "ANETUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:APLD",
+      "underlying_ticker": "APLD",
+      "market": "US",
+      "asset_name": "Applied Digital Corp",
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Bybit",
+          "symbol": "APLDUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:ARKK",
+      "underlying_ticker": "ARKK",
+      "market": "US",
+      "asset_name": "ARK Innovation ETF",
+      "asset_type": "ETF / биржевой фонд",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Bybit",
+          "symbol": "ARKKUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:BAC",
+      "underlying_ticker": "BAC",
+      "market": "US",
+      "asset_name": "Bank Of America",
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Bybit",
+          "symbol": "BACUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:BIIB",
+      "underlying_ticker": "BIIB",
+      "market": "US",
+      "asset_name": "Biogen Inc",
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Bybit",
+          "symbol": "BIIBUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:CIFR",
+      "underlying_ticker": "CIFR",
+      "market": "US",
+      "asset_name": "Cipher Mining",
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Bybit",
+          "symbol": "CIFRUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:CLSK",
+      "underlying_ticker": "CLSK",
+      "market": "US",
+      "asset_name": "Cleanspark Inc",
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Bybit",
+          "symbol": "CLSKUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:CVX",
+      "underlying_ticker": "CVX",
+      "market": "US",
+      "asset_name": "Chevron Corp",
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Bybit",
+          "symbol": "CVXSTOCKUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "FOREX:EUR/USD",
+      "underlying_ticker": "EUR/USD",
+      "market": "FOREX",
+      "asset_name": "EURUSD",
+      "asset_type": "Валютная пара",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Bybit",
+          "symbol": "EURUSDUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:FLY",
+      "underlying_ticker": "FLY",
+      "market": "US",
+      "asset_name": "Firefly Aerospace Inc",
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Bybit",
+          "symbol": "FLYUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:FUTU",
+      "underlying_ticker": "FUTU",
+      "market": "US",
+      "asset_name": "Futu Holdings",
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Bybit",
+          "symbol": "FUTUUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "FOREX:GBP/USD",
+      "underlying_ticker": "GBP/USD",
+      "market": "FOREX",
+      "asset_name": "GBPUSD",
+      "asset_type": "Валютная пара",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Bybit",
+          "symbol": "GBPUSDUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:GE",
+      "underlying_ticker": "GE",
+      "market": "US",
+      "asset_name": "GE Aerospace",
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Bybit",
+          "symbol": "GEUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:GILD",
+      "underlying_ticker": "GILD",
+      "market": "US",
+      "asset_name": "Gilead Sciences Inc",
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Bybit",
+          "symbol": "GILDUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "HKEX:1347",
+      "underlying_ticker": "1347",
+      "market": "HKEX",
+      "asset_name": "Hua Hong Grace Semiconductor Limited",
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "HKD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Bybit",
+          "symbol": "HUAHONGUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:INFQ",
+      "underlying_ticker": "INFQ",
+      "market": "US",
+      "asset_name": "Infleqtion Inc",
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Bybit",
+          "symbol": "INFQUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:INTU",
+      "underlying_ticker": "INTU",
+      "market": "US",
+      "asset_name": "Intuit Inc",
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Bybit",
+          "symbol": "INTUUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:ISRG",
+      "underlying_ticker": "ISRG",
+      "market": "US",
+      "asset_name": "Intuitive Surgical Inc",
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Bybit",
+          "symbol": "ISRGUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:JD",
+      "underlying_ticker": "JD",
+      "market": "US",
+      "asset_name": "JD Com Inc",
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Bybit",
+          "symbol": "JDUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:JNJ",
+      "underlying_ticker": "JNJ",
+      "market": "US",
+      "asset_name": "Johnson Johnson",
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Bybit",
+          "symbol": "JNJUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "HKEX:6181",
+      "underlying_ticker": "6181",
+      "market": "HKEX",
+      "asset_name": "Laopu",
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "HKD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Bybit",
+          "symbol": "LAOPUUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:MAGS",
+      "underlying_ticker": "MAGS",
+      "market": "US",
+      "asset_name": "Roundhill Magnificent Seven ETF",
+      "asset_type": "ETF / биржевой фонд",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Bybit",
+          "symbol": "MAGSUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:MA",
+      "underlying_ticker": "MA",
+      "market": "US",
+      "asset_name": "Mastercard",
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Bybit",
+          "symbol": "MAUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:MCD",
+      "underlying_ticker": "MCD",
+      "market": "US",
+      "asset_name": "McDonalds Corp",
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Bybit",
+          "symbol": "MCDUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:MNST",
+      "underlying_ticker": "MNST",
+      "market": "US",
+      "asset_name": "Monster Beverage Corporation",
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Bybit",
+          "symbol": "MNSTUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:MO",
+      "underlying_ticker": "MO",
+      "market": "US",
+      "asset_name": "Altria Aroup Inc",
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Bybit",
+          "symbol": "MOUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:MSTU",
+      "underlying_ticker": "MSTU",
+      "market": "US",
+      "asset_name": "T Rex 2X Long MSTR Daily Target ETF",
+      "asset_type": "ETF / биржевой фонд",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Bybit",
+          "symbol": "MSTUUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:NCLD",
+      "underlying_ticker": "NCLD",
+      "market": "US",
+      "asset_name": "Roundhill Neocloud ETF",
+      "asset_type": "ETF / биржевой фонд",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Bybit",
+          "symbol": "NCLDUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:OKTA",
+      "underlying_ticker": "OKTA",
+      "market": "US",
+      "asset_name": "Okta Inc",
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Bybit",
+          "symbol": "OKTAUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:ON",
+      "underlying_ticker": "ON",
+      "market": "US",
+      "asset_name": "On Semiconductor Corp",
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Bybit",
+          "symbol": "ONUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:OUST",
+      "underlying_ticker": "OUST",
+      "market": "US",
+      "asset_name": "Ouster Inc",
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Bybit",
+          "symbol": "OUSTUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:PEP",
+      "underlying_ticker": "PEP",
+      "market": "US",
+      "asset_name": "PepsiCo",
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Bybit",
+          "symbol": "PEPUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:POET",
+      "underlying_ticker": "POET",
+      "market": "US",
+      "asset_name": "POET Technologies Inc",
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Bybit",
+          "symbol": "POETUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:PURR",
+      "underlying_ticker": "PURR",
+      "market": "US",
+      "asset_name": "Hyperliquid Strategies Inc",
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Bybit",
+          "symbol": "PURRUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:RDW",
+      "underlying_ticker": "RDW",
+      "market": "US",
+      "asset_name": "Redwire Corp",
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Bybit",
+          "symbol": "RDWUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:REGN",
+      "underlying_ticker": "REGN",
+      "market": "US",
+      "asset_name": "Regeneron Pharmaceuticals Inc",
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Bybit",
+          "symbol": "REGNUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:RIOT",
+      "underlying_ticker": "RIOT",
+      "market": "US",
+      "asset_name": "Riot Platforms Inc",
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Bybit",
+          "symbol": "RIOTUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "HKEX:0981",
+      "underlying_ticker": "0981",
+      "market": "HKEX",
+      "asset_name": "Semiconductor Manufacturing Intl Co",
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "HKD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Bybit",
+          "symbol": "SMICUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:SOXX",
+      "underlying_ticker": "SOXX",
+      "market": "US",
+      "asset_name": "iShares Semiconductor ETF",
+      "asset_type": "ETF / биржевой фонд",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Bybit",
+          "symbol": "SOXXUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:SPCH",
+      "underlying_ticker": "SPCH",
+      "market": "US",
+      "asset_name": "Leverage Shares 2X Long Spcx daily ETF",
+      "asset_type": "ETF / биржевой фонд",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Bybit",
+          "symbol": "SPCHUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:SPOT",
+      "underlying_ticker": "SPOT",
+      "market": "US",
+      "asset_name": "Spotify",
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Bybit",
+          "symbol": "SPOTUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:SPXL",
+      "underlying_ticker": "SPXL",
+      "market": "US",
+      "asset_name": "Direxion Daily SP 500 Bull 3x ETF",
+      "asset_type": "ETF / биржевой фонд",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Bybit",
+          "symbol": "SPXLUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:SSPC",
+      "underlying_ticker": "SSPC",
+      "market": "US",
+      "asset_name": "Leverage Shares 2x Short SPCX Daily ETF",
+      "asset_type": "ETF / биржевой фонд",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Bybit",
+          "symbol": "SSPCUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:TSEM",
+      "underlying_ticker": "TSEM",
+      "market": "US",
+      "asset_name": "Tower Semiconductor Ltd",
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Bybit",
+          "symbol": "TSEMUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:UNH",
+      "underlying_ticker": "UNH",
+      "market": "US",
+      "asset_name": "UnitedHealth Group",
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Bybit",
+          "symbol": "UNHUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "FOREX:USD/JPY",
+      "underlying_ticker": "USD/JPY",
+      "market": "FOREX",
+      "asset_name": "US Dollars to Japanese Yen",
+      "asset_type": "Валютная пара",
+      "chart_currency": "JPY",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Bybit",
+          "symbol": "USDJPYUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:VRTX",
+      "underlying_ticker": "VRTX",
+      "market": "US",
+      "asset_name": "Vertex Pharmaceuticals Incorporated",
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Bybit",
+          "symbol": "VRTXSTOCKUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:XLF",
+      "underlying_ticker": "XLF",
+      "market": "US",
+      "asset_name": "State Street Financial Select Sector SPDR ETF",
+      "asset_type": "ETF / биржевой фонд",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Bybit",
+          "symbol": "XLFUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:XLK",
+      "underlying_ticker": "XLK",
+      "market": "US",
+      "asset_name": "State Street Technology Select Sector SPDR ETF",
+      "asset_type": "ETF / биржевой фонд",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Bybit",
+          "symbol": "XLKUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:XLP",
+      "underlying_ticker": "XLP",
+      "market": "US",
+      "asset_name": "State Street Consumer Staples Select Sector SPDR ETF",
+      "asset_type": "ETF / биржевой фонд",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Bybit",
+          "symbol": "XLPUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:XLU",
+      "underlying_ticker": "XLU",
+      "market": "US",
+      "asset_name": "State Street Utilities Select Sector SPDR ETF",
+      "asset_type": "ETF / биржевой фонд",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Bybit",
+          "symbol": "XLUUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:XLV",
+      "underlying_ticker": "XLV",
+      "market": "US",
+      "asset_name": "State Street Health Care Select Sector SPDR ETF",
+      "asset_type": "ETF / биржевой фонд",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Bybit",
+          "symbol": "XLVUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "US:XOM",
+      "underlying_ticker": "XOM",
+      "market": "US",
+      "asset_name": "Exxon",
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "USD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Bybit",
+          "symbol": "XOMUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    },
+    {
+      "asset_key": "HKEX:6869",
+      "underlying_ticker": "6869",
+      "market": "HKEX",
+      "asset_name": "Yofc",
+      "asset_type": "Акция / депозитарная расписка",
+      "chart_currency": "HKD",
+      "mapping_status": "mapped",
+      "history_verified": false,
+      "contracts": [
+        {
+          "exchange": "Bybit",
+          "symbol": "YOFCUSDT",
+          "status": "Trading",
+          "product": "TradFi perpetual"
+        }
+      ]
+    }
+  ],
+  "pending": [
+    {
+      "bybit_symbol": "MOONSHOTUSDT",
+      "asset_name": "Moonshot",
+      "status": "PreLaunch",
+      "asset_key": "Pre-IPO:MOONSHOT",
+      "underlying_ticker": null,
+      "mapping_status": "no_public_underlying_chart",
+      "history_verified": false,
+      "note": "Предварительный контракт; отсутствует подтверждённый публичный базовый график. Не включён в активный список анализа."
+    }
+  ]
+}

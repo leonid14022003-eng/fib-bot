@@ -1,0 +1,870 @@
+{
+  "INTC": {
+    "last_seq": 1,
+    "last_state": "формирование"
+  },
+  "HOOD": {
+    "last_seq": 4,
+    "last_state": "зафиксирована"
+  },
+  "MSTR": {
+    "last_seq": 2,
+    "last_state": "формирование"
+  },
+  "CRCL": {
+    "last_seq": 1,
+    "last_state": "зафиксирована"
+  },
+  "COIN": {
+    "last_seq": 2,
+    "last_state": "формирование"
+  },
+  "PLTR": {
+    "last_seq": 3,
+    "last_state": "зафиксирована"
+  },
+  "HG=F": {
+    "last_seq": 1,
+    "last_state": "формирование"
+  },
+  "EWY": {
+    "last_seq": 1,
+    "last_state": "зафиксирована"
+  },
+  "EWJ": {
+    "last_seq": 1,
+    "last_state": "зафиксирована"
+  },
+  "PAYP": {
+    "last_seq": 1,
+    "last_state": "формирование"
+  },
+  "CL=F": {
+    "last_seq": 2,
+    "last_state": "зафиксирована"
+  },
+  "BZ=F": {
+    "last_seq": 3,
+    "last_state": "зафиксирована"
+  },
+  "NG=F": {
+    "last_seq": 9,
+    "last_state": "формирование"
+  },
+  "QQQ": {
+    "last_seq": 2,
+    "last_state": "зафиксирована"
+  },
+  "SPY": {
+    "last_seq": 1,
+    "last_state": "зафиксирована"
+  },
+  "TSM": {
+    "last_seq": 1,
+    "last_state": "зафиксирована"
+  },
+  "MU": {
+    "last_seq": 1,
+    "last_state": "зафиксирована"
+  },
+  "SNDK": {
+    "last_seq": 1,
+    "last_state": "зафиксирована"
+  },
+  "AVGO": {
+    "last_seq": 2,
+    "last_state": "формирование"
+  },
+  "BABA": {
+    "last_seq": 3,
+    "last_state": "формирование"
+  },
+  "AMD": {
+    "last_seq": 3,
+    "last_state": "зафиксирована"
+  },
+  "QCOM": {
+    "last_seq": 1,
+    "last_state": "формирование"
+  },
+  "USAR": {
+    "last_seq": 1,
+    "last_state": "зафиксирована"
+  },
+  "LITE": {
+    "last_seq": 4,
+    "last_state": "формирование"
+  },
+  "ORCL": {
+    "last_seq": 3,
+    "last_state": "формирование"
+  },
+  "DIS": {
+    "last_seq": 2,
+    "last_state": "зафиксирована"
+  },
+  "UBER": {
+    "last_seq": 5,
+    "last_state": "зафиксирована"
+  },
+  "CSCO": {
+    "last_seq": 1,
+    "last_state": "зафиксирована"
+  },
+  "HD": {
+    "last_seq": 3,
+    "last_state": "формирование"
+  },
+  "SOXL": {
+    "last_seq": 1,
+    "last_state": "формирование"
+  },
+  "MRVL": {
+    "last_seq": 1,
+    "last_state": "формирование"
+  },
+  "CRWV": {
+    "last_seq": 2,
+    "last_state": "зафиксирована"
+  },
+  "WMT": {
+    "last_seq": 1,
+    "last_state": "формирование"
+  },
+  "V": {
+    "last_seq": 1,
+    "last_state": "формирование"
+  },
+  "FLNC": {
+    "last_seq": 3,
+    "last_state": "зафиксирована"
+  },
+  "DRAM": {
+    "last_seq": 1,
+    "last_state": "формирование"
+  },
+  "RKLB": {
+    "last_seq": 1,
+    "last_state": "формирование"
+  },
+  "CBRS": {
+    "last_seq": 2,
+    "last_state": "зафиксирована"
+  },
+  "SPCX": {
+    "last_seq": 2,
+    "last_state": "формирование"
+  },
+  "NBIS": {
+    "last_seq": 1,
+    "last_state": "зафиксирована"
+  },
+  "WDC": {
+    "last_seq": 1,
+    "last_state": "формирование"
+  },
+  "ARM": {
+    "last_seq": 1,
+    "last_state": "формирование"
+  },
+  "BE": {
+    "last_seq": 1,
+    "last_state": "зафиксирована"
+  },
+  "COHR": {
+    "last_seq": 2,
+    "last_state": "зафиксирована"
+  },
+  "QNT": {
+    "last_seq": 1,
+    "last_state": "зафиксирована"
+  },
+  "LLY": {
+    "last_seq": 1,
+    "last_state": "формирование"
+  },
+  "NVO": {
+    "last_seq": 1,
+    "last_state": "формирование"
+  },
+  "BB": {
+    "last_seq": 1,
+    "last_state": "формирование"
+  },
+  "NOK": {
+    "last_seq": 1,
+    "last_state": "формирование"
+  },
+  "EWT": {
+    "last_seq": 3,
+    "last_state": "формирование"
+  },
+  "ASTS": {
+    "last_seq": 1,
+    "last_state": "формирование"
+  },
+  "IBM": {
+    "last_seq": 2,
+    "last_state": "формирование"
+  },
+  "NOW": {
+    "last_seq": 2,
+    "last_state": "формирование"
+  },
+  "CRM": {
+    "last_seq": 2,
+    "last_state": "зафиксирована"
+  },
+  "IREN": {
+    "last_seq": 2,
+    "last_state": "формирование"
+  },
+  "ONDS": {
+    "last_seq": 2,
+    "last_state": "формирование"
+  },
+  "BX": {
+    "last_seq": 3,
+    "last_state": "зафиксирована"
+  },
+  "HPE": {
+    "last_seq": 1,
+    "last_state": "зафиксирована"
+  },
+  "AMAT": {
+    "last_seq": 1,
+    "last_state": "формирование"
+  },
+  "CRWD": {
+    "last_seq": 1,
+    "last_state": "формирование"
+  },
+  "CRDO": {
+    "last_seq": 2,
+    "last_state": "формирование"
+  },
+  "AAOI": {
+    "last_seq": 2,
+    "last_state": "зафиксирована"
+  },
+  "IWM": {
+    "last_seq": 1,
+    "last_state": "формирование"
+  },
+  "AXTI": {
+    "last_seq": 1,
+    "last_state": "формирование"
+  },
+  "NFLX": {
+    "last_seq": 3,
+    "last_state": "формирование"
+  },
+  "COST": {
+    "last_seq": 1,
+    "last_state": "формирование"
+  },
+  "URNM": {
+    "last_seq": 1,
+    "last_state": "формирование"
+  },
+  "HIMS": {
+    "last_seq": 2,
+    "last_state": "формирование"
+  },
+  "EBAY": {
+    "last_seq": 2,
+    "last_state": "формирование"
+  },
+  "ZM": {
+    "last_seq": 3,
+    "last_state": "зафиксирована"
+  },
+  "DKNG": {
+    "last_seq": 5,
+    "last_state": "формирование"
+  },
+  "RIVN": {
+    "last_seq": 4,
+    "last_state": "зафиксирована"
+  },
+  "GME": {
+    "last_seq": 1,
+    "last_state": "формирование"
+  },
+  "XLE": {
+    "last_seq": 1,
+    "last_state": "формирование"
+  },
+  "EWZ": {
+    "last_seq": 1,
+    "last_state": "зафиксирована"
+  },
+  "BMNR": {
+    "last_seq": 1,
+    "last_state": "формирование"
+  },
+  "UVXY": {
+    "last_seq": 1,
+    "last_state": "формирование"
+  },
+  "ADBE": {
+    "last_seq": 1,
+    "last_state": "формирование"
+  },
+  "GLW": {
+    "last_seq": 1,
+    "last_state": "формирование"
+  },
+  "STX": {
+    "last_seq": 1,
+    "last_state": "зафиксирована"
+  },
+  "ASML": {
+    "last_seq": 1,
+    "last_state": "зафиксирована"
+  },
+  "LRCX": {
+    "last_seq": 1,
+    "last_state": "формирование"
+  },
+  "KLAC": {
+    "last_seq": 1,
+    "last_state": "формирование"
+  },
+  "ALAB": {
+    "last_seq": 1,
+    "last_state": "формирование"
+  },
+  "SMCI": {
+    "last_seq": 4,
+    "last_state": "зафиксирована"
+  },
+  "CIEN": {
+    "last_seq": 1,
+    "last_state": "формирование"
+  },
+  "KORU": {
+    "last_seq": 2,
+    "last_state": "формирование"
+  },
+  "SONY": {
+    "last_seq": 2,
+    "last_state": "зафиксирована"
+  },
+  "MVLL": {
+    "last_seq": 2,
+    "last_state": "формирование"
+  },
+  "TQQQ": {
+    "last_seq": 2,
+    "last_state": "зафиксирована"
+  },
+  "SQQQ": {
+    "last_seq": 1,
+    "last_state": "зафиксирована"
+  },
+  "STRC": {
+    "last_seq": 1,
+    "last_state": "формирование"
+  },
+  "CAT": {
+    "last_seq": 1,
+    "last_state": "формирование"
+  },
+  "TXN": {
+    "last_seq": 2,
+    "last_state": "формирование"
+  },
+  "FLEX": {
+    "last_seq": 2,
+    "last_state": "формирование"
+  },
+  "TER": {
+    "last_seq": 1,
+    "last_state": "зафиксирована"
+  },
+  "TTWO": {
+    "last_seq": 2,
+    "last_state": "формирование"
+  },
+  "KSTR": {
+    "last_seq": 1,
+    "last_state": "формирование"
+  },
+  "BSP": {
+    "last_seq": 1,
+    "last_state": "формирование"
+  },
+  "BOT": {
+    "last_seq": 2,
+    "last_state": "зафиксирована"
+  },
+  "WEN": {
+    "last_seq": 1,
+    "last_state": "зафиксирована"
+  },
+  "INTW": {
+    "last_seq": 1,
+    "last_state": "формирование"
+  },
+  "SNXX": {
+    "last_seq": 1,
+    "last_state": "формирование"
+  },
+  "XBI": {
+    "last_seq": 1,
+    "last_state": "формирование"
+  },
+  "BNC": {
+    "last_seq": 3,
+    "last_state": "формирование"
+  },
+  "FWDI": {
+    "last_seq": 1,
+    "last_state": "формирование"
+  },
+  "GEV": {
+    "last_seq": 1,
+    "last_state": "зафиксирована"
+  },
+  "VRT": {
+    "last_seq": 2,
+    "last_state": "зафиксирована"
+  },
+  "SNOW": {
+    "last_seq": 5,
+    "last_state": "формирование"
+  },
+  "APP": {
+    "last_seq": 3,
+    "last_state": "формирование"
+  },
+  "SKHY": {
+    "last_seq": 1,
+    "last_state": "формирование"
+  },
+  "MUU": {
+    "last_seq": 1,
+    "last_state": "формирование"
+  },
+  "SOXS": {
+    "last_seq": 4,
+    "last_state": "формирование"
+  },
+  "TZA": {
+    "last_seq": 1,
+    "last_state": "формирование"
+  },
+  "0100.HK": {
+    "last_seq": 2,
+    "last_state": "зафиксирована"
+  },
+  "2513.HK": {
+    "last_seq": 1,
+    "last_state": "формирование"
+  },
+  "0700.HK": {
+    "last_seq": 3,
+    "last_state": "формирование"
+  },
+  "1810.HK": {
+    "last_seq": 2,
+    "last_state": "формирование"
+  },
+  "SHAZ": {
+    "last_seq": 1,
+    "last_state": "зафиксирована"
+  },
+  "SOFI": {
+    "last_seq": 2,
+    "last_state": "формирование"
+  },
+  "PANW": {
+    "last_seq": 1,
+    "last_state": "зафиксирована"
+  },
+  "PENG": {
+    "last_seq": 1,
+    "last_state": "формирование"
+  },
+  "9992.HK": {
+    "last_seq": 2,
+    "last_state": "формирование"
+  },
+  "TMF": {
+    "last_seq": 1,
+    "last_state": "формирование"
+  },
+  "TBT": {
+    "last_seq": 4,
+    "last_state": "зафиксирована"
+  },
+  "BITO": {
+    "last_seq": 1,
+    "last_state": "формирование"
+  },
+  "PYPL": {
+    "last_seq": 2,
+    "last_state": "формирование"
+  },
+  "GS": {
+    "last_seq": 1,
+    "last_state": "формирование"
+  },
+  "SMH": {
+    "last_seq": 1,
+    "last_state": "зафиксирована"
+  },
+  "3986.HK": {
+    "last_seq": 1,
+    "last_state": "формирование"
+  },
+  "KO": {
+    "last_seq": 1,
+    "last_state": "формирование"
+  },
+  "RDDT": {
+    "last_seq": 2,
+    "last_state": "зафиксирована"
+  },
+  "3690.HK": {
+    "last_seq": 1,
+    "last_state": "зафиксирована"
+  },
+  "7709.HK": {
+    "last_seq": 1,
+    "last_state": "формирование"
+  },
+  "3308.HK": {
+    "last_seq": 1,
+    "last_state": "зафиксирована"
+  },
+  "066570.KS": {
+    "last_seq": 1,
+    "last_state": "формирование"
+  },
+  "069500.KS": {
+    "last_seq": 1,
+    "last_state": "формирование"
+  },
+  "GDX": {
+    "last_seq": 3,
+    "last_state": "формирование"
+  },
+  "NET": {
+    "last_seq": 1,
+    "last_state": "зафиксирована"
+  },
+  "VST": {
+    "last_seq": 4,
+    "last_state": "зафиксирована"
+  },
+  "SHOP": {
+    "last_seq": 2,
+    "last_state": "зафиксирована"
+  },
+  "LYTE": {
+    "last_seq": 1,
+    "last_state": "формирование"
+  },
+  "688825.SS": {
+    "last_seq": 2,
+    "last_state": "зафиксирована"
+  },
+  "SKUU": {
+    "last_seq": 3,
+    "last_state": "формирование"
+  },
+  "SKDD": {
+    "last_seq": 1,
+    "last_state": "формирование"
+  },
+  "RAM": {
+    "last_seq": 2,
+    "last_state": "зафиксирована"
+  },
+  "DJT": {
+    "last_seq": 1,
+    "last_state": "зафиксирована"
+  },
+  "MRNA": {
+    "last_seq": 3,
+    "last_state": "формирование"
+  },
+  "TEM": {
+    "last_seq": 1,
+    "last_state": "формирование"
+  },
+  "MRK": {
+    "last_seq": 2,
+    "last_state": "формирование"
+  },
+  "IONQ": {
+    "last_seq": 1,
+    "last_state": "зафиксирована"
+  },
+  "MARA": {
+    "last_seq": 5,
+    "last_state": "зафиксирована"
+  },
+  "PDD": {
+    "last_seq": 4,
+    "last_state": "формирование"
+  },
+  "NVDL": {
+    "last_seq": 1,
+    "last_state": "зафиксирована"
+  },
+  "TSLL": {
+    "last_seq": 1,
+    "last_state": "формирование"
+  },
+  "DDOG": {
+    "last_seq": 1,
+    "last_state": "формирование"
+  },
+  "TEAM": {
+    "last_seq": 2,
+    "last_state": "формирование"
+  },
+  "MDB": {
+    "last_seq": 5,
+    "last_state": "зафиксирована"
+  },
+  "ZS": {
+    "last_seq": 3,
+    "last_state": "формирование"
+  },
+  "GTLB": {
+    "last_seq": 3,
+    "last_state": "формирование"
+  },
+  "GPRO": {
+    "last_seq": 3,
+    "last_state": "формирование"
+  },
+  "1211.HK": {
+    "last_seq": 1,
+    "last_state": "формирование"
+  },
+  "0992.HK": {
+    "last_seq": 1,
+    "last_state": "формирование"
+  },
+  "AAL": {
+    "last_seq": 7,
+    "last_state": "зафиксирована"
+  },
+  "ADI": {
+    "last_seq": 1,
+    "last_state": "формирование"
+  },
+  "AEHR": {
+    "last_seq": 1,
+    "last_state": "формирование"
+  },
+  "AMC": {
+    "last_seq": 2,
+    "last_state": "зафиксирована"
+  },
+  "AMGN": {
+    "last_seq": 2,
+    "last_state": "формирование"
+  },
+  "ANET": {
+    "last_seq": 2,
+    "last_state": "зафиксирована"
+  },
+  "APLD": {
+    "last_seq": 2,
+    "last_state": "формирование"
+  },
+  "ARKK": {
+    "last_seq": 6,
+    "last_state": "зафиксирована"
+  },
+  "BAC": {
+    "last_seq": 1,
+    "last_state": "формирование"
+  },
+  "BIIB": {
+    "last_seq": 3,
+    "last_state": "формирование"
+  },
+  "CIFR": {
+    "last_seq": 2,
+    "last_state": "формирование"
+  },
+  "CLSK": {
+    "last_seq": 4,
+    "last_state": "зафиксирована"
+  },
+  "CVX": {
+    "last_seq": 1,
+    "last_state": "формирование"
+  },
+  "FLY": {
+    "last_seq": 5,
+    "last_state": "зафиксирована"
+  },
+  "FUTU": {
+    "last_seq": 3,
+    "last_state": "зафиксирована"
+  },
+  "GE": {
+    "last_seq": 1,
+    "last_state": "формирование"
+  },
+  "GILD": {
+    "last_seq": 2,
+    "last_state": "зафиксирована"
+  },
+  "1347.HK": {
+    "last_seq": 2,
+    "last_state": "формирование"
+  },
+  "INFQ": {
+    "last_seq": 2,
+    "last_state": "формирование"
+  },
+  "INTU": {
+    "last_seq": 1,
+    "last_state": "зафиксирована"
+  },
+  "ISRG": {
+    "last_seq": 3,
+    "last_state": "формирование"
+  },
+  "JD": {
+    "last_seq": 3,
+    "last_state": "зафиксирована"
+  },
+  "JNJ": {
+    "last_seq": 1,
+    "last_state": "формирование"
+  },
+  "MAGS": {
+    "last_seq": 2,
+    "last_state": "зафиксирована"
+  },
+  "MA": {
+    "last_seq": 5,
+    "last_state": "формирование"
+  },
+  "MCD": {
+    "last_seq": 1,
+    "last_state": "формирование"
+  },
+  "MNST": {
+    "last_seq": 3,
+    "last_state": "формирование"
+  },
+  "MO": {
+    "last_seq": 1,
+    "last_state": "формирование"
+  },
+  "MSTU": {
+    "last_seq": 2,
+    "last_state": "формирование"
+  },
+  "NCLD": {
+    "last_seq": 1,
+    "last_state": "формирование"
+  },
+  "OKTA": {
+    "last_seq": 7,
+    "last_state": "формирование"
+  },
+  "ON": {
+    "last_seq": 2,
+    "last_state": "формирование"
+  },
+  "OUST": {
+    "last_seq": 8,
+    "last_state": "зафиксирована"
+  },
+  "PEP": {
+    "last_seq": 3,
+    "last_state": "формирование"
+  },
+  "POET": {
+    "last_seq": 1,
+    "last_state": "формирование"
+  },
+  "PURR": {
+    "last_seq": 1,
+    "last_state": "формирование"
+  },
+  "RDW": {
+    "last_seq": 4,
+    "last_state": "зафиксирована"
+  },
+  "REGN": {
+    "last_seq": 2,
+    "last_state": "формирование"
+  },
+  "RIOT": {
+    "last_seq": 4,
+    "last_state": "зафиксирована"
+  },
+  "0981.HK": {
+    "last_seq": 3,
+    "last_state": "зафиксирована"
+  },
+  "SOXX": {
+    "last_seq": 1,
+    "last_state": "формирование"
+  },
+  "SPCH": {
+    "last_seq": 1,
+    "last_state": "формирование"
+  },
+  "SPOT": {
+    "last_seq": 2,
+    "last_state": "формирование"
+  },
+  "SPXL": {
+    "last_seq": 1,
+    "last_state": "формирование"
+  },
+  "SSPC": {
+    "last_seq": 1,
+    "last_state": "формирование"
+  },
+  "TSEM": {
+    "last_seq": 1,
+    "last_state": "зафиксирована"
+  },
+  "UNH": {
+    "last_seq": 2,
+    "last_state": "формирование"
+  },
+  "VRTX": {
+    "last_seq": 1,
+    "last_state": "формирование"
+  },
+  "XLF": {
+    "last_seq": 1,
+    "last_state": "формирование"
+  },
+  "XLK": {
+    "last_seq": 2,
+    "last_state": "зафиксирована"
+  },
+  "XLP": {
+    "last_seq": 2,
+    "last_state": "зафиксирована"
+  },
+  "XLU": {
+    "last_seq": 4,
+    "last_state": "формирование"
+  },
+  "XLV": {
+    "last_seq": 3,
+    "last_state": "формирование"
+  },
+  "XOM": {
+    "last_seq": 3,
+    "last_state": "формирование"
+  }
+}

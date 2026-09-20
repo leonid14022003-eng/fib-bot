@@ -221,6 +221,62 @@ def format_message(
     return "\n".join(lines)
 
 
+_LOCAL_GRID_EMOJI = {
+    "формирование": "🌱",
+    "зафиксирована": "🔒",
+    "завершена": "🏁",
+}
+
+
+def format_local_grid_message(symbol: str, global_grid, local, display_name: str | None = None) -> str:
+    """
+    Сообщение по одной локальной сетке (agents/local_grid_agent.py, коммит
+    cbb2f71 — построена по PDF-спецификации Леонида, отдельная от боевого
+    fibo_agent.py датамодель) — новый, явно помеченный тип алерта (14
+    сентября 2026, часть broad_screener.py). Не путать с format_message()
+    выше: та берёт FiboStructure/AnalysisBundle боевой глобальной сетки, эта
+    -- GlobalGrid/LocalGrid из local_grid_agent.py. Стиль оформления (HTML,
+    эмодзи-заголовок, моноширинная таблица уровней) намеренно тот же, что и
+    у format_message() -- единообразие в чате получателя, не новый
+    визуальный язык ради одной фичи.
+
+    Какое именно событие это сообщение представляет ("сформирована"/
+    "зафиксирована"/"завершена") определяется тем, что за LocalGrid сюда
+    передал вызывающий код (broad_screener.py решает это через дедуп по
+    (symbol, seq, local.state) -- здесь только форматирование уже готового
+    объекта, без какой-либо памяти между вызовами).
+    """
+    symbol_esc = _esc(symbol)
+    title = f"{_esc(display_name)} ({symbol_esc})" if display_name and display_name != symbol else symbol_esc
+    emoji = _LOCAL_GRID_EMOJI.get(local.state.value, "🔹")
+    lines: list[str] = [
+        f"{emoji} <b>{title}</b> — Локальная сетка №{local.seq} [{local.direction.value}]: {local.state.value}",
+        f"🌐 Глобальная ({global_grid.direction.value}): "
+        f"{global_grid.point1.price:.2f} ({global_grid.point1.dt}) → {global_grid.point2.price:.2f} ({global_grid.point2.dt})",
+        "",
+        f"Точка 1 (100%): <b>{local.point1.price:.2f}</b> ({local.point1.kind}, {local.point1.dt})",
+    ]
+    if local.point2_final is not None:
+        lines.append(
+            f"Точка 2 (0%):   <b>{local.point2_final.price:.2f}</b> ({local.point2_final.kind}, {local.point2_final.dt})"
+        )
+        lines.append(f"Подтверждена (двусвечное закрепление за локальными 50%): {local.confirmed_date}")
+    else:
+        p = local.point2_preliminary
+        lines.append(f"Точка 2 (0%, ПРЕДВАРИТЕЛЬНАЯ, ещё формируется): <b>{p.price:.2f}</b> ({p.kind}, {p.dt})")
+    levels = local.levels()
+    if levels:
+        lines.append("")
+        level_lines = [f"{r:>5.3f} = {price:>10.2f}" for r, price in sorted(levels.items())]
+        lines.append("<pre>" + _esc("\n".join(level_lines)) + "</pre>")
+    if local.exit_date is not None:
+        lines.append("")
+        lines.append(f"🚪 Выход: {local.exit_date}, через границу {local.exit_border}, цена {local.exit_price:.2f}")
+        note = "продолжение в том же направлении (0%)" if local.exit_border == "0%" else "разворот (100%)"
+        lines.append(f"<i>{note}</i>")
+    return "\n".join(lines)
+
+
 def should_send(bundle: AnalysisBundle, mode: str = "always") -> tuple[bool, str]:
     """
     Финальное решение "достаточно ли значимо, чтобы отправлять".

@@ -31,9 +31,11 @@ from __future__ import annotations
 
 import os
 import re
+import time
 from dataclasses import dataclass
 from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
+from zoneinfo import ZoneInfo
 
 
 @dataclass(frozen=True)
@@ -269,6 +271,97 @@ def load_binance_daily(
         candles=candles,
         fetched_via="requests.get (прямой HTTP к Binance)",
         fetch_note=f"interval=1d, limit={limit} (~{limit} последних дневных свечей)",
+    )
+
+
+def load_yahoo_daily(
+    symbol: str,
+    months_back: int = 60,
+    exchange_hint: str = "",
+) -> CandleSeries:
+    """
+    Расширение охвата инструментов (14 сентября 2026) — Yahoo Finance chart
+    API, для инструментов, которых нет на FMP Starter. `symbol` уже должен
+    быть в формате, который понимает Yahoo (см. data/broad_universe.py, где
+    строится маппинг тикер -> Yahoo-символ) — эта функция, как и
+    load_binance_daily() выше, не делает собственного маппинга.
+
+    Бесплатный, без ключа. Порт логики из локального прототипа
+    (~/Downloads/fib-bot_2/engine/providers.py::yahoo()) на схему Candle/
+    CandleSeries этого проекта: там `closed` — поле Candle-объекта своей
+    датамодели, здесь у Candle такого поля нет, поэтому ещё формирующийся
+    сегодняшний бар просто ОТБРАСЫВАЕТСЯ, а не помечается флагом (та же
+    свеча появится завершённой на следующем прогоне).
+
+    В отличие от прототипа, где history=True всегда тянет ВСЮ доступную
+    историю (period1=0) — здесь, как и у load_fmp_daily(), окно ограничено
+    months_back (по умолчанию 60 мес. = 5 лет), чтобы не создавать лишнюю
+    нагрузку на Yahoo при регулярных прогонах по ~230 инструментам.
+
+    Одна попытка, без повтора при ошибке — как и у прототипа (Yahoo не
+    документирует официальный SLA для этого недокументированного chart API,
+    честно не притворяемся, что знаем как его ретраить правильно). Ошибка
+    здесь = ValueError с текстом причины, ловится вызывающим кодом так же,
+    как и у остальных load_*_daily().
+    """
+    import requests  # локальный импорт, как и у остальных load_*_daily() выше
+
+    today = date.today()
+    date_from = today - timedelta(days=int(months_back * 30.44))
+    params = {
+        "interval": "1d",
+        "events": "splits",
+        "includePrePost": "false",
+        "period1": int(datetime.combine(date_from, datetime.min.time(), tzinfo=timezone.utc).timestamp()),
+        "period2": int(time.time()) + 1,
+    }
+    url = f"https://query1.finance.yahoo.com/v8/finance/chart/{symbol}"
+    resp = requests.get(
+        url, params=params, timeout=20,
+        headers={"User-Agent": "Mozilla/5.0 fib-bot broad_screener/1.0"},
+    )
+    try:
+        resp.raise_for_status()
+    except requests.exceptions.HTTPError as e:
+        raise ValueError(f"Yahoo HTTP {resp.status_code} для {symbol}: {resp.text[:300]}") from None
+    payload = resp.json()
+    results = payload.get("chart", {}).get("result")
+    if not results:
+        raise ValueError(f"Yahoo не вернул данные для {symbol}: {payload.get('chart', {}).get('error')}")
+    obj = results[0]
+    meta = obj.get("meta", {})
+    quote_block = obj.get("indicators", {}).get("quote", [{}])[0]
+    timestamps = obj.get("timestamp", [])
+    tz = ZoneInfo(meta.get("exchangeTimezoneName") or "UTC")
+    today_local = datetime.now(tz).date()
+    session_end = meta.get("currentTradingPeriod", {}).get("regular", {}).get("end", float("inf"))
+    candles: list[Candle] = []
+    for i, ts in enumerate(timestamps):
+        o = quote_block.get("open", [None])[i] if i < len(quote_block.get("open", [])) else None
+        h = quote_block.get("high", [None])[i] if i < len(quote_block.get("high", [])) else None
+        l = quote_block.get("low", [None])[i] if i < len(quote_block.get("low", [])) else None
+        c = quote_block.get("close", [None])[i] if i < len(quote_block.get("close", [])) else None
+        v = quote_block.get("volume", [None])[i] if i < len(quote_block.get("volume", [])) else None
+        if o is None or h is None or l is None or c is None:
+            continue  # Yahoo кладёт null в дни без торгов внутри диапазона -- пропускаем, не подставляем
+        bar_date = datetime.fromtimestamp(ts, tz).date()
+        is_closed = bar_date < today_local or (bar_date == today_local and time.time() > session_end + 120)
+        if not is_closed:
+            continue
+        candles.append(Candle(dt=bar_date, open=float(o), high=float(h), low=float(l), close=float(c), volume=int(v or 0)))
+    candles.sort(key=lambda c: c.dt)
+    if not candles:
+        raise ValueError(f"Yahoo вернул пустую (или ещё не закрытую) историю для {symbol}")
+    bad = [c for c in candles if not (c.high >= max(c.open, c.close) and c.low <= min(c.open, c.close))]
+    if bad:
+        raise ValueError(f"Структурно некорректные свечи от Yahoo (high/low не огибают open/close): {bad[:3]}")
+    return CandleSeries(
+        symbol=symbol,
+        exchange_or_source=f"Yahoo Finance chart API (без ключа) -- {exchange_hint or meta.get('exchangeName', '')}",
+        timeframe="1D",
+        candles=candles,
+        fetched_via="requests.get (прямой HTTP, без суммаризирующего слоя)",
+        fetch_note=f"Запрошен диапазон {date_from.isoformat()}..{today.isoformat()} ({months_back} мес.), сегодняшний незакрытый бар отброшен",
     )
 
 
