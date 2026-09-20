@@ -1,0 +1,42 @@
+{
+  "ETHUSDT": {
+    "structure_id": "2025-04-09|2025-08-24|восходящий",
+    "last_alerted_level": 0.618
+  },
+  "XRPUSDT": {
+    "structure_id": "2024-07-05|2025-07-18|восходящий",
+    "last_alerted_level": 0.618
+  },
+  "XLMUSDT": {
+    "structure_id": "2024-08-05|2024-11-24|восходящий",
+    "last_alerted_level": 0.786
+  },
+  "CCUSDT": {
+    "structure_id": "2025-12-06|2026-02-03|восходящий",
+    "last_alerted_level": 0.618
+  },
+  "HBARUSDT": {
+    "structure_id": "2024-11-03|2025-01-17|восходящий",
+    "last_alerted_level": 0.786
+  },
+  "MUSDT": {
+    "structure_id": "2025-07-30|2026-04-24|восходящий",
+    "last_alerted_level": 0.618
+  },
+  "SUIUSDT": {
+    "structure_id": "2024-08-05|2025-01-06|восходящий",
+    "last_alerted_level": 0.786
+  },
+  "ONDOUSDT": {
+    "structure_id": "2024-02-01|2024-12-16|восходящий",
+    "last_alerted_level": 0.786
+  },
+  "1000PEPEUSDT": {
+    "structure_id": "2024-02-05|2024-12-09|восходящий",
+    "last_alerted_level": 0.786
+  },
+  "AKEUSDT": {
+    "structure_id": "2026-07-10|2026-09-20|восходящий",
+    "last_alerted_level": 0.618
+  }
+}
