@@ -24,9 +24,10 @@ from __future__ import annotations
 
 import html
 
-from agents.dispatch_agent import Recipient, send_via_telegram
+from agents.dispatch_agent import send_via_telegram
+from recipients import LEONID
 
-_OPS_RECIPIENT = Recipient(label="Леонид (@vaskodevasko)", telegram_chat_id="885989790")
+_OPS_RECIPIENT = LEONID
 
 # Лимит на хвост лога в сообщении -- у Telegram sendMessage лимит 4096
 # символов на текст (см. dispatch_agent.py, send_via_telegram), оставляем

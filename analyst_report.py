@@ -42,8 +42,9 @@ from pathlib import Path
 
 from agents.analyst_agent import BACKTEST_CAVEAT, CALL_BUY, CALL_SELL, analyze_series, format_verdict
 from agents.data_agent import load_fmp_daily
-from agents.dispatch_agent import Recipient, _strip_html, send_document_via_telegram
+from agents.dispatch_agent import _strip_html, send_document_via_telegram
 from agents.intraday_agent import get_intraday_confirmations
+from recipients import ALL_RECIPIENTS
 from screener import INSTRUMENTS, Instrument
 
 ROOT = Path(__file__).resolve().parent
@@ -215,11 +216,7 @@ def main() -> None:
     send_real = bool(os.environ.get("TELEGRAM_BOT_TOKEN")) and os.environ.get("ANALYST_REPORT_SEND_REAL") == "1"
     bot_token = os.environ.get("TELEGRAM_BOT_TOKEN") if send_real else None
 
-    recipients = [
-        Recipient(label="Леонид (@vaskodevasko)", telegram_chat_id="885989790"),
-        Recipient(label="Сергей (@sergikvsl)", telegram_chat_id="1253087193"),
-        Recipient(label="Pavel", telegram_chat_id="980723803"),
-    ]
+    recipients = ALL_RECIPIENTS
     # Только ПОКУПКА/ПРОДАЖА уходит в Telegram -- по прямому запросу
     # Леонида, 5 сентября 2026 ("присылай только покупку или продажу").
     # Полная картина по всем 15 (включая ЖДАТЬ) всё равно сохранена выше в

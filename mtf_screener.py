@@ -73,7 +73,6 @@ from agents.data_agent import load_fmp_daily, load_fmp_intraday, resample_candle
 from agents.dispatch_agent import (
     AnalysisBundle,
     LevelWatchState,
-    Recipient,
     format_message,
     send_via_telegram,
     should_send_level_watch,
@@ -82,6 +81,7 @@ from agents.fibo_agent import StructureScope, build_dual_direction_fibo, build_d
 from agents.price_behavior_agent import nearest_level, recent_level_events
 from agents.verification_agent import run_checklist
 from analyst_report import ALL_INSTRUMENTS
+from recipients import ALL_RECIPIENTS
 from screener import Instrument
 
 ROOT = Path(__file__).resolve().parent
@@ -109,11 +109,7 @@ INTRADAY_CASCADE = [("Час", "1hour", HOURLY_DAYS_BACK), ("4 часа", "4hour
 # пропускаем заранее, не тратя вызов (см. докстринг файла).
 INDEX_NO_4H_ON_STARTER = {"^GSPC", "^DJI", "^RUT"}
 
-RECIPIENTS = [
-    Recipient(label="Леонид (@vaskodevasko)", telegram_chat_id="885989790"),
-    Recipient(label="Сергей (@sergikvsl)", telegram_chat_id="1253087193"),
-    Recipient(label="Pavel", telegram_chat_id="980723803"),
-]
+RECIPIENTS = ALL_RECIPIENTS
 
 
 def _load_state() -> dict[str, LevelWatchState]:

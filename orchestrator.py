@@ -16,7 +16,6 @@ from agents.data_agent import load_fmp_daily, load_ibm_demo_daily
 from agents.dispatch_agent import (
     AnalysisBundle,
     LevelWatchState,
-    Recipient,
     format_message,
     send_photo_via_telegram,
     send_via_telegram,
@@ -26,6 +25,7 @@ from agents.fibo_agent import build_global_fibo, build_local_fibo, find_fractal_
 from agents.intraday_agent import build_intraday_note
 from agents.price_behavior_agent import nearest_level, recent_level_events
 from agents.verification_agent import cross_check_structures, format_consensus_note, run_checklist
+from recipients import ALL_RECIPIENTS
 
 ROOT = Path(__file__).resolve().parent
 ALERT_STATE_PATH = ROOT / "output" / "alert_state.json"
@@ -202,11 +202,7 @@ def run_once() -> None:
         # взяты из getUpdates). bot_token берём из окружения ТОЛЬКО в LIVE-режиме
         # -- иначе принудительно None (dry-run), даже если переменная вдруг
         # где-то случайно задана локально.
-        recipients = [
-            Recipient(label="Леонид (@vaskodevasko)", telegram_chat_id="885989790"),
-            Recipient(label="Сергей (@sergikvsl)", telegram_chat_id="1253087193"),
-            Recipient(label="Pavel", telegram_chat_id="980723803"),
-        ]
+        recipients = ALL_RECIPIENTS
         bot_token = os.environ.get("TELEGRAM_BOT_TOKEN") if LIVE else None
 
         # Внутридневное подтверждение (раздел 7.3 регламента, 2 сентября 2026,

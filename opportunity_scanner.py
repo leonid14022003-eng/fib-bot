@@ -50,8 +50,9 @@ import os
 
 from agents.analyst_agent import BACKTEST_CAVEAT, CALL_BUY, CALL_SELL, analyze_series, format_verdict
 from agents.data_agent import load_binance_daily, load_fmp_daily
-from agents.dispatch_agent import Recipient, _strip_html, send_document_via_telegram
+from agents.dispatch_agent import _strip_html, send_document_via_telegram
 from analyst_report import ALL_INSTRUMENTS as TRACKED_INSTRUMENTS
+from recipients import ALL_RECIPIENTS
 from screener import Instrument
 from universe import load_binance_tradfi_universe
 
@@ -176,11 +177,7 @@ def main() -> None:
 
     send_real = bool(os.environ.get("TELEGRAM_BOT_TOKEN")) and os.environ.get("OPPORTUNITY_SCANNER_SEND_REAL") == "1"
     bot_token = os.environ.get("TELEGRAM_BOT_TOKEN") if send_real else None
-    recipients = [
-        Recipient(label="Леонид (@vaskodevasko)", telegram_chat_id="885989790"),
-        Recipient(label="Сергей (@sergikvsl)", telegram_chat_id="1253087193"),
-        Recipient(label="Pavel", telegram_chat_id="980723803"),
-    ]
+    recipients = ALL_RECIPIENTS
     caption = f"🆕 Новых возможностей вне списка: {len(opportunities)} -- полный разбор во вложении"
     result = send_document_via_telegram(
         report_text.encode("utf-8"), recipients, bot_token=bot_token, caption=caption, filename="opportunities.txt"
