@@ -61,7 +61,7 @@ from agents.fibo_agent import (
     find_fractal_swing_extremes,
     find_global_extremes,
 )
-from agents.price_behavior_agent import NearestLevelInfo, RecentEvent, recent_level_events
+from agents.price_behavior_agent import NearestLevelInfo, RecentEvent, nearest_level, recent_level_events
 from agents.verification_agent import (
     CheckResult,
     ChecklistReport,
@@ -326,16 +326,13 @@ def _mk_bundle(
         levels=levels,
     )
     current_price = point2_price + fraction * (point1_price - point2_price)
-    nearest = NearestLevelInfo(
-        current_price=current_price,
-        below_level=None,
-        below_price=None,
-        above_level=None,
-        above_price=None,
-        nearest_level=0.0,
-        nearest_price=current_price,
-        is_testing=False,
-    )
+    # До 20 сентября 2026 здесь была заглушка (below/above=None,
+    # nearest_level=0.0) -- этого хватало, пока format_message() показывал
+    # ВСЕ уровни структуры отдельной таблицей независимо от nearest. После
+    # облегчения сообщений (см. dispatch_agent.py::format_message()) текст
+    # реально показывает below/above/nearest -- фикстура должна считать их
+    # той же функцией, что и боевой код, а не выдумывать отдельно.
+    nearest = nearest_level(structure, current_price)
     checklist = ChecklistReport(results=[CheckResult("dummy", checklist_ok, "-")])
     return AnalysisBundle(
         symbol="TEST",
@@ -928,10 +925,15 @@ def test_format_message_includes_consensus_note_when_provided():
 
 
 def test_format_consensus_note_all_three_states():
+    # 20 сентября 2026 (облегчение сообщений): agree=True теперь даёт None,
+    # а не текст подтверждения -- скучный "всё сошлось" не должен быть
+    # шумом в каждом сообщении. disagree/unavailable -- настоящая
+    # неопределённость, по-прежнему возвращают текст всегда (регламент,
+    # раздел 2: не прятать реальный caveat).
     agree_msg = format_consensus_note(True, "не используется в этой ветке")
     disagree_msg = format_consensus_note(False, "Разное направление: восходящий vs нисходящий")
     unavailable_msg = format_consensus_note(None, "слишком мало данных")
-    assert "подтверждены" in agree_msg, agree_msg
+    assert agree_msg is None, agree_msg
     assert "РАСХОЖДЕНИЕ" in disagree_msg and "Разное направление" in disagree_msg, disagree_msg
     assert "недоступна" in unavailable_msg and "слишком мало данных" in unavailable_msg, unavailable_msg
     print("OK  test_format_consensus_note_all_three_states")

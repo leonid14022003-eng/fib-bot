@@ -103,17 +103,25 @@ def format_message(
     """
     Формат раздела 24 регламента: инструмент, источник, таймфрейм, период,
     тип ФИБО, структура, точка 1, точка 2, основные уровни, текущая цена,
-    положение цены -- ровно тот же обязательный набор данных, что и раньше.
-    Регламент задаёт СОДЕРЖАНИЕ сообщения, но ничего не говорит про то, как
-    оно должно выглядеть визуально -- значит, ниже чистое оформление, а не
-    смена методики (раздел 25 тут не задействован, по сути менять нечего).
+    положение цены -- все эти поля по-прежнему присутствуют, регламент
+    задаёт СОДЕРЖАНИЕ, не форму (раздел 25 тут не задействован).
 
-    Визуальный редизайн от 25 августа, по прямому запросу Леонида ("чтобы
-    это не выглядело просто как слова и цифры, а чтобы глазу было
-    приятно"): HTML-разметка для Telegram (parse_mode="HTML" в
-    send_via_telegram) -- жирный заголовок, моноширинная таблица уровней с
-    меткой ближайшего/тестируемого уровня, текстовая полоска глубины
-    коррекции, эмодзи вместо сухих слов "восходящий/нисходящий".
+    Облегчённый редизайн от 20 сентября 2026, по прямому запросу Леонида
+    ("не так развёрнуто, а облегчённо... чтобы это был помощник") --
+    убрана полная моноширинная таблица всех уровней (0..текущий): она
+    дублировала то, что и так нарисовано на прикреплённом графике
+    (render_chart рисует те же линии уровней визуально) -- в тексте
+    оставлена только ОДНА строка с уровнем, который реально сейчас важен
+    (тестируемый / между какими двумя). Также убран блок "недавние реакции
+    на уровни" (до 5 пунктов с примечаниями) -- историческая, не срочная
+    информация, отвлекающая от главного в push-уведомлении; полная картина
+    по-прежнему в консольном логе сервера (см. price_behavior_agent.py),
+    просто больше не дублируется в каждом сообщении получателю.
+
+    Уровни-расширения (1.414 и далее, см. правку 27 августа "уровни-
+    расширения на сообщении") — по-прежнему показываются, но только когда
+    реально нужны (цена ушла за исходный диапазон), одной строкой с
+    ближайшей ещё не достигнутой целью, а не всей таблицей вперёд.
 
     alert_level -- если задан, это реальный триггер level-watch (не просто
     информационный дамп), заголовок оформляется как алерт ("коррекция
@@ -124,18 +132,17 @@ def format_message(
     скринеру, чтобы показывать оба сразу. Для точечного IBM-watch не
     передаётся -- там имя и тикер и так совпадают.
 
-    consensus_note -- 27 августа, по отзыву "брокера" (project doc):
-    готовая строка от format_consensus_note() (verification_agent.py),
-    добавляется отдельной строкой в конце сообщения, если передана. Не
-    вычисляется здесь заново -- вызывающий код (orchestrator.py/screener.py)
-    уже считает независимую сверку для консоли, просто теперь передаёт тот
-    же результат и сюда, чтобы получатель алерта тоже его видел.
+    consensus_note -- готовая строка от format_consensus_note()
+    (verification_agent.py), добавляется отдельной строкой, если передана.
+    С 20 сентября 2026 format_consensus_note() сама возвращает None в
+    скучном случае "всё сошлось" (см. её докстринг) -- то есть строка
+    здесь появляется, только когда есть что-то РЕАЛЬНО заметное
+    (расхождение или недоступность сверки), а не как рутинное
+    подтверждение на каждом сообщении.
 
-    intraday_note -- 2 сентября 2026, раздел 7.3 регламента (многотайм-
-    фреймовое подтверждение 1H/4H, отзыв "брокера" 27 августа): готовая
-    строка от build_intraday_note() (agents/intraday_agent.py), тот же
-    принцип, что и у consensus_note -- необязательная, добавляется своей
-    строкой, если передана, ничего не блокирует и не подменяет.
+    intraday_note -- готовая строка от build_intraday_note()
+    (agents/intraday_agent.py), тот же принцип, что и у consensus_note --
+    необязательная, добавляется своей строкой, если передана.
     """
     s = bundle.structure
     n = bundle.nearest
@@ -146,77 +153,40 @@ def format_message(
     lines: list[str] = []
     if alert_level is not None:
         lines.append(f"🔔 <b>{title}</b> — коррекция дошла до {alert_level:g}")
-        lines.append("<i>вот текущая картина:</i>")
     else:
         lines.append(f"{dir_emoji} <b>{title}</b>")
     lines.append(f"📊 {_esc(bundle.source_tag)} · {_esc(bundle.timeframe)} · {_esc(bundle.period_desc)}")
-    lines.append(f"{dir_emoji} ФИБО: {s.direction.value}, {s.scope.value}")
-    lines.append("")
-    lines.append(f"Точка 1 (100%): <b>{s.point1.price:.2f}</b> ({s.point1.kind}, {s.point1.dt})")
-    lines.append(f"Точка 2 (0%):   <b>{s.point2.price:.2f}</b> ({s.point2.kind}, {s.point2.dt})")
-    lines.append("")
+    lines.append(
+        f"{dir_emoji} {s.direction.value}, {s.scope.value}: "
+        f"<b>{s.point1.price:.2f}</b> ({s.point1.dt}) → <b>{s.point2.price:.2f}</b> ({s.point2.dt})"
+    )
     # 27 августа (по отзыву "брокера", см. project doc): ориентир инвалидации
     # -- закрытие ЗА точку 1 отменяет гипотезу "коррекция исчерпалась, дальше
-    # снова движение в сторону точки 2" (та же логика, что уже неявно жила в
-    # structure_id -- новый экстремум за точкой 1 и так означал бы новую
-    # структуру при следующем прогоне). Явно показываем это ЧИСЛОМ, а не
-    # только подразумеваем -- сформулировано как гипотеза, а не команда
-    # "стоп тут": бот не даёт торговых указаний, только структурный ориентир.
-    lines.append(
-        f"⚠️ Ориентир инвалидации (гипотеза «коррекция исчерпалась»): "
-        f"закрытие за <b>{s.point1.price:.2f}</b> (точка 1)"
-    )
-    lines.append("")
-    lines.append(f"Глубина коррекции: <b>{frac * 100:.1f}%</b>")
-    lines.append(f"0% {_depth_bar(frac)} 100%")
-    lines.append("")
-    # 27 августа (по запросу Леонида -- "уровни-расширения на сообщении"):
-    # расширения (1.414 и далее, уже посчитаны в fibo_agent.py, просто
-    # раньше не показывались) включаются в таблицу, только когда цена
-    # реально ушла за пределы исходного диапазона (frac > 1.0) -- иначе
-    # они никому не нужны и просто загромождали бы обычный алерт.
-    # Показываем не ВСЕ расширения сразу, а только до ближайшего ещё не
-    # достигнутого ("следующая цель") -- чтобы таблица росла постепенно
-    # вместе с движением цены, а не показывала сразу все 5 уровней вперёд.
+    # снова движение в сторону точки 2". Сформулировано как гипотеза, а не
+    # команда "стоп тут": бот не даёт торговых указаний, только структурный
+    # ориентир. Текст короче, чем раньше, но фраза "Ориентир инвалидации" и
+    # сама цена точки 1 -- намеренно на месте (см. test_format_message_shows_invalidation_price).
+    lines.append(f"⚠️ Ориентир инвалидации: закрытие за <b>{s.point1.price:.2f}</b> (точка 1)")
+    lines.append(f"Глубина коррекции: <b>{frac * 100:.1f}%</b> {_depth_bar(frac)}")
+    # Уровни-расширения (27 августа) -- одна строка с ближайшей ещё не
+    # достигнутой целью, только когда цена реально ушла за исходный
+    # диапазон (frac > 1.0). В обычном диапазоне ничего не показываем --
+    # см. докстринг выше про то, зачем убрана полная таблица.
     extension_levels_sorted = sorted(lv.level for lv in s.levels if lv.level > 1.0)
     if frac > 1.0 and extension_levels_sorted:
         next_target = next((lv for lv in extension_levels_sorted if lv >= frac), extension_levels_sorted[-1])
-        show_up_to = next_target
-    else:
-        show_up_to = 1.0
-    level_lines = []
-    sorted_levels = sorted((lv for lv in s.levels if lv.level <= show_up_to), key=lambda x: x.level)
-    for lv in sorted_levels:
-        is_nearest = lv.level == n.nearest_level
-        marker = "▶" if is_nearest else " "
-        tag = ""
-        if is_nearest:
-            tag = "  ← тестирует" if n.is_testing else "  ← ближайший"
-        level_lines.append(f"{marker} {lv.level:>5.3f} = {lv.price:>10.2f}{tag}")
-    lines.append("<pre>" + _esc("\n".join(level_lines)) + "</pre>")
+        target_price = next(lv.price for lv in s.levels if lv.level == next_target)
+        lines.append(f"🎯 Цена ушла за исходный диапазон — следующая цель {next_target:g} ({target_price:.2f})")
     lines.append(f"💰 Текущая цена: <b>{n.current_price:.2f}</b>")
     if n.is_testing:
-        lines.append(f"🎯 Цена тестирует уровень {n.nearest_level:g} ({n.nearest_price:.2f})")
+        lines.append(f"🎯 Тестирует уровень {n.nearest_level:g} ({n.nearest_price:.2f})")
     else:
         below = f"{n.below_level:g} ({n.below_price:.2f})" if n.below_level is not None else "—"
         above = f"{n.above_level:g} ({n.above_price:.2f})" if n.above_level is not None else "—"
-        lines.append(
-            f"Цена между уровнями {below} и {above}, ближе к {n.nearest_level:g} ({n.nearest_price:.2f})"
-        )
-    if bundle.recent_events:
-        lines.append("")
-        lines.append("🔁 <b>Недавние реакции на уровни:</b>")
-        for e in bundle.recent_events[-5:]:
-            lines.append(f"• {e.dt}: {_esc(e.kind)} @ {e.level:g} ({e.level_price:.2f})")
-            lines.append(f"  <i>{_esc(e.note)}</i>")
-    else:
-        lines.append("")
-        lines.append("Недавних тестов/пробоев ключевых уровней не найдено в рассмотренном окне.")
+        lines.append(f"Между {below} и {above}, ближе к {n.nearest_level:g} ({n.nearest_price:.2f})")
     if consensus_note:
-        lines.append("")
         lines.append(_esc(consensus_note))
     if intraday_note:
-        lines.append("")
         lines.append(_esc(intraday_note))
     return "\n".join(lines)
 
@@ -245,6 +215,13 @@ def format_local_grid_message(symbol: str, global_grid, local, display_name: str
     передал вызывающий код (broad_screener.py решает это через дедуп по
     (symbol, seq, local.state) -- здесь только форматирование уже готового
     объекта, без какой-либо памяти между вызовами).
+
+    Облегчённый редизайн 20 сентября 2026 (см. format_message() выше про
+    общий запрос "не так развёрнуто") -- точки 1/2 сведены в одну строку,
+    пустые строки-разделители убраны. Таблица уровней сознательно
+    ОСТАВЛЕНА (в отличие от format_message()) -- у локальных сеток нет
+    прикреплённого графика (send_via_telegram, не send_photo_via_telegram),
+    так что текст — единственное место, где эти числа вообще видны.
     """
     symbol_esc = _esc(symbol)
     title = f"{_esc(display_name)} ({symbol_esc})" if display_name and display_name != symbol else symbol_esc
@@ -253,24 +230,24 @@ def format_local_grid_message(symbol: str, global_grid, local, display_name: str
         f"{emoji} <b>{title}</b> — Локальная сетка №{local.seq} [{local.direction.value}]: {local.state.value}",
         f"🌐 Глобальная ({global_grid.direction.value}): "
         f"{global_grid.point1.price:.2f} ({global_grid.point1.dt}) → {global_grid.point2.price:.2f} ({global_grid.point2.dt})",
-        "",
-        f"Точка 1 (100%): <b>{local.point1.price:.2f}</b> ({local.point1.kind}, {local.point1.dt})",
     ]
     if local.point2_final is not None:
         lines.append(
-            f"Точка 2 (0%):   <b>{local.point2_final.price:.2f}</b> ({local.point2_final.kind}, {local.point2_final.dt})"
+            f"Точка 1 (100%): <b>{local.point1.price:.2f}</b> ({local.point1.kind}, {local.point1.dt}) → "
+            f"Точка 2 (0%): <b>{local.point2_final.price:.2f}</b> ({local.point2_final.kind}, {local.point2_final.dt})"
         )
         lines.append(f"Подтверждена (двусвечное закрепление за локальными 50%): {local.confirmed_date}")
     else:
         p = local.point2_preliminary
-        lines.append(f"Точка 2 (0%, ПРЕДВАРИТЕЛЬНАЯ, ещё формируется): <b>{p.price:.2f}</b> ({p.kind}, {p.dt})")
+        lines.append(
+            f"Точка 1 (100%): <b>{local.point1.price:.2f}</b> ({local.point1.kind}, {local.point1.dt}) → "
+            f"Точка 2 (0%, ПРЕДВАРИТЕЛЬНАЯ): <b>{p.price:.2f}</b> ({p.kind}, {p.dt})"
+        )
     levels = local.levels()
     if levels:
-        lines.append("")
         level_lines = [f"{r:>5.3f} = {price:>10.2f}" for r, price in sorted(levels.items())]
         lines.append("<pre>" + _esc("\n".join(level_lines)) + "</pre>")
     if local.exit_date is not None:
-        lines.append("")
         lines.append(f"🚪 Выход: {local.exit_date}, через границу {local.exit_border}, цена {local.exit_price:.2f}")
         note = "продолжение в том же направлении (0%)" if local.exit_border == "0%" else "разворот (100%)"
         lines.append(f"<i>{note}</i>")

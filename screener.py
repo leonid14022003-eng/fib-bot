@@ -226,7 +226,9 @@ def run_screener() -> None:
         inst = r["instrument"]
         if r["status"] == "OK":
             print(f"  {inst.label:30s} [{inst.symbol:10s}] отход {r['fraction']:.3f} -- OK")
-            print(f"    {r['consensus_note']} [пока не блокирует]")
+            # С 20 сентября 2026 consensus_note может быть None (см.
+            # format_consensus_note() -- скучный случай "всё сошлось").
+            print(f"    {r['consensus_note'] or '🔍 сверка: согласны'} [пока не блокирует]")
         else:
             print(f"  {inst.label:30s} [{inst.symbol:10s}] {r['status']}: {r['detail']}")
 
