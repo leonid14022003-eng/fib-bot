@@ -123,6 +123,16 @@ def format_message(
     реально нужны (цена ушла за исходный диапазон), одной строкой с
     ближайшей ещё не достигнутой целью, а не всей таблицей вперёд.
 
+    Второй проход облегчения (21 сентября 2026, "можно ещё облегчить"):
+    когда сработал alert_level, заголовок УЖЕ называет достигнутый уровень
+    ("коррекция дошла до 0.618") -- строка "между 0.618 и 0.786, ближе к
+    0.618" в этом случае просто повторяла то же самое другими словами.
+    Теперь при алерте вместо неё -- одна короткая строка "следующий
+    уровень", а если следующего нет (уровень 1.0 и дальше без расширения)
+    -- строка вообще не показывается. Полная "между X и Y" формулировка
+    сохранена для НЕЙТРАЛЬНОЙ сводки (alert_level не задан) -- там это
+    единственное место, где вообще видно положение цены.
+
     alert_level -- если задан, это реальный триггер level-watch (не просто
     информационный дамп), заголовок оформляется как алерт ("коррекция
     дошла до X"), а не как нейтральная сводка.
@@ -173,12 +183,19 @@ def format_message(
     # диапазон (frac > 1.0). В обычном диапазоне ничего не показываем --
     # см. докстринг выше про то, зачем убрана полная таблица.
     extension_levels_sorted = sorted(lv.level for lv in s.levels if lv.level > 1.0)
-    if frac > 1.0 and extension_levels_sorted:
+    showed_extension = frac > 1.0 and bool(extension_levels_sorted)
+    if showed_extension:
         next_target = next((lv for lv in extension_levels_sorted if lv >= frac), extension_levels_sorted[-1])
         target_price = next(lv.price for lv in s.levels if lv.level == next_target)
         lines.append(f"🎯 Цена ушла за исходный диапазон — следующая цель {next_target:g} ({target_price:.2f})")
     lines.append(f"💰 Текущая цена: <b>{n.current_price:.2f}</b>")
-    if n.is_testing:
+    if alert_level is not None:
+        # Заголовок уже назвал достигнутый уровень -- не повторяем его тут
+        # же другими словами, только подсказываем, что дальше (если есть
+        # куда, и это ещё не показано строкой расширения выше).
+        if not showed_extension and n.above_level is not None:
+            lines.append(f"➡️ Следующий уровень: {n.above_level:g} ({n.above_price:.2f})")
+    elif n.is_testing:
         lines.append(f"🎯 Тестирует уровень {n.nearest_level:g} ({n.nearest_price:.2f})")
     else:
         below = f"{n.below_level:g} ({n.below_price:.2f})" if n.below_level is not None else "—"
@@ -216,12 +233,15 @@ def format_local_grid_message(symbol: str, global_grid, local, display_name: str
     (symbol, seq, local.state) -- здесь только форматирование уже готового
     объекта, без какой-либо памяти между вызовами).
 
-    Облегчённый редизайн 20 сентября 2026 (см. format_message() выше про
-    общий запрос "не так развёрнуто") -- точки 1/2 сведены в одну строку,
-    пустые строки-разделители убраны. Таблица уровней сознательно
-    ОСТАВЛЕНА (в отличие от format_message()) -- у локальных сеток нет
-    прикреплённого графика (send_via_telegram, не send_photo_via_telegram),
-    так что текст — единственное место, где эти числа вообще видны.
+    Облегчённый редизайн 20-21 сентября 2026 (см. format_message() выше
+    про общий запрос "не так развёрнуто") -- точки 1/2 сведены в одну
+    строку, пустые строки-разделители убраны, пояснение механики
+    подтверждения ("двусвечное закрепление за локальными 50%") убрано --
+    сама дата подтверждения важнее, чем напоминание как именно она
+    получена. Таблица уровней сознательно ОСТАВЛЕНА (в отличие от
+    format_message()) -- у локальных сеток нет прикреплённого графика
+    (send_via_telegram, не send_photo_via_telegram), так что текст —
+    единственное место, где эти числа вообще видны.
     """
     symbol_esc = _esc(symbol)
     title = f"{_esc(display_name)} ({symbol_esc})" if display_name and display_name != symbol else symbol_esc
@@ -236,7 +256,7 @@ def format_local_grid_message(symbol: str, global_grid, local, display_name: str
             f"Точка 1 (100%): <b>{local.point1.price:.2f}</b> ({local.point1.kind}, {local.point1.dt}) → "
             f"Точка 2 (0%): <b>{local.point2_final.price:.2f}</b> ({local.point2_final.kind}, {local.point2_final.dt})"
         )
-        lines.append(f"Подтверждена (двусвечное закрепление за локальными 50%): {local.confirmed_date}")
+        lines.append(f"Подтверждена: {local.confirmed_date}")
     else:
         p = local.point2_preliminary
         lines.append(
