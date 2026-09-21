@@ -24,7 +24,6 @@ import math
 import re
 from dataclasses import dataclass, field
 
-from agents.edge_stats import format_edge_line
 from agents.fibo_agent import FiboStructure
 from agents.price_behavior_agent import NearestLevelInfo, RecentEvent
 from agents.risk_agent import build_risk_plan, format_risk_line
@@ -47,12 +46,6 @@ def _esc(value: object) -> str:
     может сломать парсинг на стороне Telegram и алерт не дойдёт вообще
     (см. send_via_telegram про fallback на обычный текст на этот случай)."""
     return _html.escape(str(value))
-
-
-# Исследование 21 сентября 2026 (research/) считало только структуры с >= 500
-# свечей истории -- см. research_engine.WARMUP. Ниже этого порога базовые
-# частоты из agents/edge_stats.py не показываем.
-MIN_HISTORY_BARS_FOR_EDGE = 500
 
 
 def _fmt_price(x: float) -> str:
@@ -107,6 +100,8 @@ class AnalysisBundle:
     # Оба поля необязательные и стоят В КОНЦЕ -- все существующие вызовы
     # AnalysisBundle(...) (orchestrator, mtf_screener, тесты) продолжают работать
     # без изменений; без ATR строка риска просто не помечает "стоп внутри шума".
+    # history_bars/asset_kind сейчас в текст не выводятся (см. _risk_lines) -- оставлены
+    # для edge_stats.py, если строку истории когда-нибудь вернут.
     atr14: float | None = None
     history_bars: int | None = None  # сколько свечей истории лежит под структурой; None -- неизвестно
     asset_kind: str = "stock"  # "crypto" -- отдельный класс базовых частот (см. edge_stats.py)
@@ -137,27 +132,15 @@ def _short_source(tag: str) -> str:
     return t[:24]
 
 
-def _risk_edge_lines(bundle: "AnalysisBundle", alert_level: float | None) -> list[str]:
-    """Строки "📐" (риск) и "📊" (история) -- общие для компактного алерта и
-    нейтральной сводки; "📊" только у настоящего алерта и только для дневных
-    структур с достаточной историей (см. agents/edge_stats.py)."""
+def _risk_lines(bundle: "AnalysisBundle") -> list[str]:
+    """Строка "📐" (риск) -- общая для компактного алерта и нейтральной сводки.
+    Строка "📊" (как такие сигналы исторически заканчивались, agents/edge_stats.py)
+    из алертов УБРАНА по решению Леонида 21 сентября 2026 ("убери последний
+    пункт"); модуль edge_stats.py и данные исследования остаются в проекте, но
+    получателям больше не показываются."""
     s, n = bundle.structure, bundle.nearest
-    out: list[str] = []
     plan = build_risk_plan(n.current_price, s.point1.price, s.point2.price, atr=bundle.atr14)
-    if plan is not None:
-        out.append(format_risk_line(plan))
-    # Базовые частоты измерены ТОЛЬКО на дневных структурах ("1D") -- для
-    # недельных/месячных/внутридневных они не применимы (показывать их там
-    # было бы обманом); на короткой истории (<500 свечей) тоже.
-    if alert_level is not None and bundle.timeframe == "1D":
-        sign = 1 if s.point2.price > s.point1.price else -1
-        if bundle.history_bars is not None and bundle.history_bars < MIN_HISTORY_BARS_FOR_EDGE:
-            out.append(f"⚠️ История {bundle.history_bars} св. — статистика неприменима")
-        else:
-            edge_line = format_edge_line(bundle.asset_kind, sign, alert_level)
-            if edge_line:
-                out.append(_esc(edge_line))
-    return out
+    return [format_risk_line(plan)] if plan is not None else []
 
 
 def _format_alert_compact(
@@ -173,7 +156,13 @@ def _format_alert_compact(
     одна честная строка истории. Цена -- в заголовке; источник -- коротким
     именем; период/даты точек, полоска глубины, подсказка "следующий уровень"
     и "стоп раньше" убраны. Полная форма раздела 24 остаётся в нейтральной
-    сводке (format_message без alert_level)."""
+    сводке (format_message без alert_level).
+
+    Второй проход (21 сентября 2026, "убери инвалидацию, убери последний
+    пункт"): строка "Инвалидация" и строка "📊 история" убраны -- алерт из
+    3 строк: заголовок с ценой, направление с границами структуры (первое
+    число -- точка 1, она же уровень инвалидации; расстояние до неё уже
+    есть в риск-строке как "Стоп X%") и риск."""
     s, n = bundle.structure, bundle.nearest
     frac = retracement_fraction(bundle)
     dir_emoji = _DIRECTION_EMOJI.get(s.direction.value, "🔹")
@@ -183,14 +172,13 @@ def _format_alert_compact(
         f"🔔 <b>{title}</b> — откат до {alert_level:g} · <b>{_fmt_price(n.current_price)}</b>",
         f"{dir_emoji} {s.direction.value}: {_fmt_price(s.point1.price)} → {_fmt_price(s.point2.price)}"
         f" · {_esc(bundle.timeframe)} · {_esc(_short_source(bundle.source_tag))}",
-        f"⚠️ Инвалидация: закрытие за <b>{_fmt_price(s.point1.price)}</b> · глубина {frac * 100:.0f}%",
     ]
     extension_levels_sorted = sorted(lv.level for lv in s.levels if lv.level > 1.0)
     if frac > 1.0 and extension_levels_sorted:
         next_target = next((lv for lv in extension_levels_sorted if lv >= frac), extension_levels_sorted[-1])
         target_price = next(lv.price for lv in s.levels if lv.level == next_target)
         lines.append(f"🎯 За точкой 1 — следующая цель {next_target:g} ({_fmt_price(target_price)})")
-    lines.extend(_risk_edge_lines(bundle, alert_level))
+    lines.extend(_risk_lines(bundle))
     if consensus_note:
         lines.append(_esc(consensus_note))
     if intraday_note:
@@ -244,12 +232,11 @@ def format_message(
     консоль). Ниже описание нейтральной формы и общего риск-блока.
 
     Риск-блок (21 сентября 2026, итог исследования на ~650 инструментах, см.
-    research/): две короткие строки -- "📐" (стоп/цель/R:R/объём позиции при
-    риске 1% депозита, agents/risk_agent.py) и "📊" (как такие сигналы
-    исторически заканчивались по сравнению со случайным входом,
-    agents/edge_stats.py). Вторая строка -- только у настоящего алерта и
-    честно говорит, если сетап НЕ лучше случайного входа (продажа отскока,
-    крипта) -- сообщение не должно выглядеть увереннее, чем позволяют данные.
+    research/): строка "📐" (стоп/R:R/позиция при риске 1% депозита,
+    agents/risk_agent.py) -- единственная "аналитическая" строка алерта.
+    Строка "📊" с историческими частотами (agents/edge_stats.py) была в алерте
+    с 21 сентября утром и убрана в тот же день по решению Леонида; модуль и
+    данные остались в проекте.
 
     alert_level -- если задан, это реальный триггер level-watch (не просто
     информационный дамп), заголовок оформляется как алерт ("коррекция
@@ -304,7 +291,7 @@ def format_message(
         below = f"{n.below_level:g} ({_fmt_price(n.below_price)})" if n.below_level is not None else "—"
         above = f"{n.above_level:g} ({_fmt_price(n.above_price)})" if n.above_level is not None else "—"
         lines.append(f"Между {below} и {above}, ближе к {n.nearest_level:g} ({_fmt_price(n.nearest_price)})")
-    lines.extend(_risk_edge_lines(bundle, None))
+    lines.extend(_risk_lines(bundle))
     if consensus_note:
         lines.append(_esc(consensus_note))
     if intraday_note:
