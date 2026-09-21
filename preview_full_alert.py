@@ -111,7 +111,8 @@ def main() -> None:
     except ValueError as e:
         consensus_agree, consensus_detail = None, str(e)
     consensus_note = format_consensus_note(consensus_agree, consensus_detail)
-    print(f"{consensus_note} [пока не блокирует отправку]")
+    # С 20 сентября 2026 format_consensus_note() может вернуть None (см. её докстринг).
+    print(f"{consensus_note or '🔍 Независимая сверка: согласны, без замечаний'} [пока не блокирует отправку]")
 
     bundle = AnalysisBundle(
         symbol=series.symbol,
