@@ -342,6 +342,25 @@ def outcome_e2(c: np.ndarray, t: int, sign: int, entry: float, risk: float, r_ta
     return max(val, LOSS_FLOOR), kind
 
 
+def outcome_e3(c: np.ndarray, t: int, sign: int, entry: float, risk: float, r_target: float, h: int = H_E2):
+    """Как E2, но стоп исполняется РОВНО по -1R (реальный стоп-ордер на уровне), а не по
+    цене закрытия, которая может перескочить уровень. E1/E2 считают убыток по факту закрытия --
+    при узком стопе это систематически занижает результат (и сигнала, и контроля) и делает
+    сравнение абсолютных R нечестным: E3 убирает этот перекос (гэп-риск здесь не моделируется)."""
+    if t + h >= len(c) or not (r_target > 0) or math.isnan(r_target):
+        return None
+    r = sign * (c[t + 1:t + 1 + h] - entry) / risk
+    stop = np.where(r <= -1.0)[0]
+    tgt = np.where(r >= r_target)[0]
+    first_stop = stop[0] if len(stop) else 10 ** 9
+    first_tgt = tgt[0] if len(tgt) else 10 ** 9
+    if first_stop == 10 ** 9 and first_tgt == 10 ** 9:
+        return float(r[-1]), "timeout"
+    if first_stop < first_tgt:
+        return -1.0, "stop"
+    return float(r_target), "target"
+
+
 # --------------------------------------------------------------------------
 # статистика
 # --------------------------------------------------------------------------

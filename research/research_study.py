@@ -85,11 +85,13 @@ def _work(inst):
         for s in sigs:
             e1 = E.outcome_e1(inst.c, s.t, s.sign, s.entry, s.risk)
             e2 = E.outcome_e2(inst.c, s.t, s.sign, s.entry, s.risk, s.r_target)
+            e3 = E.outcome_e3(inst.c, s.t, s.sign, s.entry, s.risk, s.r_target)
             # контроль: случайные входы с той же геометрией
             rnd = random.Random(zlib.crc32(f"{inst.name}|{gname}|{s.t}".encode()))
             lo, hi = E.WARMUP, inst.n - 1 - max(E.H_E1, E.H_E2) - 1
             n1 = []
             n2 = []
+            n3 = []
             if hi > lo:
                 for _ in range(NULL_REPS):
                     tt = rnd.randint(lo, hi)
@@ -97,10 +99,13 @@ def _work(inst):
                     risk = s.risk_pct * entry
                     r1 = E.outcome_e1(inst.c, tt, s.sign, entry, risk)
                     r2 = E.outcome_e2(inst.c, tt, s.sign, entry, risk, s.r_target)
+                    r3 = E.outcome_e3(inst.c, tt, s.sign, entry, risk, s.r_target)
                     if r1:
                         n1.append(r1[0])
                     if r2:
                         n2.append(r2[0])
+                    if r3:
+                        n3.append(r3[0])
             age = s.t - max(s.p1_idx, s.p2_idx)          # баров с конца импульса (H_b: свежесть отката)
             leg_atr = abs(s.p2 - s.p1) / s.atr if s.atr == s.atr and s.atr > 0 else None   # H_c: размер импульса
             rows.append({
@@ -112,6 +117,8 @@ def _work(inst):
                 "e2": e2[0] if e2 else None, "e2k": e2[1] if e2 else None,
                 "n1": (sum(n1) / len(n1)) if n1 else None,
                 "n2": (sum(n2) / len(n2)) if n2 else None,
+                "e3": e3[0] if e3 else None, "e3k": e3[1] if e3 else None,
+                "n3": (sum(n3) / len(n3)) if n3 else None,
             })
         out[gname] = rows
     return inst.name, out
