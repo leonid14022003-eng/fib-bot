@@ -31,6 +31,11 @@ Yahoo/Binance, 2016-2026), 2 900+ сигналов метода, ровно ка
 """
 from __future__ import annotations
 
+import sys as _sys
+from pathlib import Path as _Path
+_sys.path.insert(0, str(_Path(__file__).resolve().parent.parent))  # корень репозитория (agents/, data/, backtest.py)
+_sys.path.insert(0, str(_Path(__file__).resolve().parent))
+
 STUDY_DATE = "2026-09-21"
 ADVANTAGE_MIN = 0.05   # p_plus1R - control_plus1R (на 60 днях) от этого порога считаем преимущество заметным
 NO_EDGE_BAND = 0.03    # внутри +-этой полосы -- неотличимо от случайного входа
@@ -100,16 +105,12 @@ def format_edge_line(kind: str, sign: int, level: float) -> str | None:
     if r60 is None:
         return None
     if key == "crypto_all":
-        return (
-            f"📊 Крипта: по истории (n={r60[0]}) преимущество над случайным входом не подтверждено -- "
-            f"опирайтесь на риск-блок, не на сетап"
-        )
-    n60, p60, c60, s60 = r60[0], r60[1], r60[2], r60[3]
-    p120, c120, s120 = (r120[1], r120[2], r120[3]) if r120 else (None, None, None)
+        return f"📊 Крипта: преимущество не подтверждено (n={r60[0]})"
+    p60, c60 = r60[1], r60[2]
+    p120, c120 = (r120[1], r120[2]) if r120 else (None, None)
     tail = f"{_pct(p60)}/{_pct(p120)}%" if p120 is not None else f"{_pct(p60)}%"
     ctrl = f"{_pct(c60)}/{_pct(c120)}%" if c120 is not None else f"{_pct(c60)}%"
-    stop = f"{_pct(s60)}/{_pct(s120)}%" if s120 is not None else f"{_pct(s60)}%"
-    line = f"📊 История, 60/120 дн: +1R раньше стопа {tail} (случайный вход {ctrl}) · стоп раньше {stop}"
+    line = f"📊 60/120 дн: +1R раньше стопа {tail} (случайно {ctrl})"
     diff = p60 - c60
     if diff >= ADVANTAGE_MIN:
         return line

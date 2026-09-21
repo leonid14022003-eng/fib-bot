@@ -97,13 +97,13 @@ class TestFormatRiskLine(unittest.TestCase):
         line = format_risk_line(plan)
         self.assertIn("R:R 1:1.9", line)
         self.assertIn("Стоп 21.2%", line)
-        self.assertIn("объём ≈ 4.7% депозита", line)
+        self.assertIn("позиция 4.7% депозита", line)
         self.assertNotIn("<", line)  # без HTML -- не ломает баланс тегов
         self.assertNotIn("шум", line)
 
     def test_noise_warning_present_only_when_flagged(self):
         plan = build_risk_plan(entry=165.0, point1=200.0, point2=100.0, atr=40.0)
-        self.assertIn("внутри обычного дневного шума", format_risk_line(plan))
+        self.assertIn("в шуме", format_risk_line(plan))
 
 
 class TestAtr14(unittest.TestCase):
@@ -142,7 +142,7 @@ class TestEdgeStats(unittest.TestCase):
     def test_long_line_has_no_warning(self):
         line = format_edge_line("stock", 1, 0.618)
         self.assertIn("📊", line)
-        self.assertIn("случайный вход", line)
+        self.assertIn("случайно", line)
         self.assertNotIn("⚠️", line)
 
     def test_short_line_warns_it_is_not_better_than_random(self):
@@ -168,7 +168,7 @@ class TestFormatMessageIntegration(unittest.TestCase):
     def test_neutral_summary_has_risk_line_but_no_edge_line(self):
         msg = format_message(_mk_bundle(fraction=0.65))
         self.assertIn("📐", msg)
-        self.assertNotIn("📊 История", msg)
+        self.assertNotIn("📊 60/120", msg)
 
     def test_no_risk_line_when_price_beyond_the_range(self):
         msg = format_message(_mk_bundle(fraction=1.2), alert_level=1.0)  # цена за точкой 1 -- плана нет
@@ -178,11 +178,11 @@ class TestFormatMessageIntegration(unittest.TestCase):
         bundle = replace(_mk_bundle(fraction=0.65), asset_kind="crypto")
         msg = format_message(bundle, alert_level=0.618)
         self.assertIn("Крипта", msg)
-        self.assertNotIn("История, 60/120", msg)
+        self.assertNotIn("60/120 дн", msg)
 
     def test_atr_makes_noise_warning_appear(self):
         bundle = replace(_mk_bundle(fraction=0.65), atr14=40.0)  # стоп 35 < 1 ATR
-        self.assertIn("внутри обычного дневного шума", format_message(bundle, alert_level=0.618))
+        self.assertIn("в шуме", format_message(bundle, alert_level=0.618))
 
     def test_html_tags_stay_balanced_and_line_count_reasonable(self):
         for lvl in (None, 0.618, 0.786):
@@ -193,37 +193,53 @@ class TestFormatMessageIntegration(unittest.TestCase):
             self.assertIsNone(re.search(r"<(?!/?(b|i|pre)>)", msg), "неэкранированный '<' в тексте")
 
 
-class TestNextLevelHintIsDirectionAgnostic(unittest.TestCase):
-    """Регрессия 21 сентября 2026: для восходящей структуры подсказка показывала уже пройденный уровень."""
+class TestCompactAlert(unittest.TestCase):
+    """21 сентября 2026: "надо ещё короче, слишком много лишней информации"."""
 
-    def _next_line(self, msg):
-        lines = [l for l in msg.splitlines() if l.startswith("➡️")]
-        self.assertLessEqual(len(lines), 1)
-        return lines[0] if lines else None
+    def _alert(self, bundle, lvl=0.618):
+        return format_message(bundle, alert_level=lvl)
 
-    def test_ascending_structure_points_to_deeper_level_below_price(self):
-        bundle = _mk_ascending_bundle(fraction=0.637)  # цена 136.3: 0.618 пройден, глубже -- 0.786 (121.4)
-        line = self._next_line(format_message(bundle, alert_level=0.618))
-        self.assertIsNotNone(line)
-        self.assertIn("0.786", line)
-        self.assertIn("121.40", line)
-        self.assertNotIn("0.618", line)
+    def test_typical_alert_is_at_most_six_lines_for_both_directions(self):
+        for bundle in (_mk_ascending_bundle(fraction=0.70), _mk_bundle(fraction=0.70)):
+            msg = self._alert(bundle)
+            self.assertLessEqual(len(msg.splitlines()), 6, msg)
 
-    def test_descending_structure_same_rule(self):
-        line = self._next_line(format_message(_mk_bundle(fraction=0.65), alert_level=0.618))
-        self.assertIn("0.786", line)
-        self.assertIn("178.60", line)
+    def test_price_and_level_are_in_the_title_line(self):
+        first = self._alert(_mk_ascending_bundle(fraction=0.70)).splitlines()[0]
+        self.assertIn("откат до 0.618", first)
+        self.assertIn("130.00", first)  # текущая цена: 200 - 0.7*100
 
-    def test_shallow_depth_with_many_deeper_levels_does_not_crash_and_picks_nearest(self):
-        # регрессия: sorted() по FiboLevel без ключа падал, когда глубже глубины лежало >1 уровня
-        for bundle in (_mk_ascending_bundle(fraction=0.10), _mk_bundle(fraction=0.10)):
-            line = self._next_line(format_message(bundle, alert_level=0.618))
-            self.assertIn("0.236", line)  # ближайший более глубокий, не самый дальний
+    def test_removed_noise_stays_removed(self):
+        msg = self._alert(_mk_ascending_bundle(fraction=0.70))
+        for junk in ("▰", "▱", "➡️", "Между", "Текущая цена", "Глубина коррекции", "(точка 1)", "период"):
+            self.assertNotIn(junk, msg, junk)
 
-    def test_no_hint_when_next_level_is_point1_itself(self):
-        # глубина 0.80 -> следующий уровень 1.0 = точка 1, она уже стоит строкой инвалидации
-        self.assertIsNone(self._next_line(format_message(_mk_ascending_bundle(fraction=0.80), alert_level=0.786)))
-        self.assertIsNone(self._next_line(format_message(_mk_bundle(fraction=0.80), alert_level=0.786)))
+    def test_invalidation_and_depth_kept_on_one_line(self):
+        line = [l for l in self._alert(_mk_ascending_bundle(fraction=0.70)).splitlines() if "Инвалидация" in l]
+        self.assertEqual(len(line), 1)
+        self.assertIn("закрытие за <b>100.00</b>", line[0])
+        self.assertIn("глубина 70%", line[0])
+
+    def test_long_source_is_shortened(self):
+        long_tag = "Financial Modeling Prep /stable/historical-price-eod (Starter plan) -- NASDAQ/NYSE (US)"
+        msg = self._alert(replace(_mk_ascending_bundle(fraction=0.70), source_tag=long_tag))
+        self.assertIn("FMP", msg)
+        self.assertNotIn("Starter", msg)
+        self.assertNotIn("historical-price-eod", msg)
+
+    def test_neutral_summary_keeps_full_section_24_form(self):
+        msg = format_message(_mk_ascending_bundle(fraction=0.70))
+        self.assertIn("Ориентир инвалидации", msg)
+        self.assertIn("Текущая цена", msg)
+        self.assertIn("▰", msg)
+
+    def test_intraday_note_prefix_is_shortened_in_alert_only(self):
+        note = "⏱ Внутридневное подтверждение (раздел 7.3, справочно): 1H тестирует 0.618"
+        alert = format_message(_mk_ascending_bundle(fraction=0.70), alert_level=0.618, intraday_note=note)
+        self.assertIn("1H/4H: 1H тестирует 0.618", alert)
+        self.assertNotIn("раздел 7.3", alert)
+        neutral = format_message(_mk_ascending_bundle(fraction=0.70), intraday_note=note)
+        self.assertIn("Внутридневное подтверждение", neutral)
 
 
 class TestPriceFormatting(unittest.TestCase):
@@ -252,27 +268,27 @@ class TestEdgeLineOnlyForDailyStructures(unittest.TestCase):
             bundle = replace(_mk_ascending_bundle(fraction=0.70), timeframe=tf)
             msg = format_message(bundle, alert_level=0.618)
             self.assertIn("📐", msg, tf)
-            self.assertNotIn("📊 История", msg, tf)
+            self.assertNotIn("📊 60/120", msg, tf)
             self.assertNotIn("Крипта", msg, tf)
 
     def test_daily_structure_keeps_base_rates(self):
         msg = format_message(replace(_mk_ascending_bundle(fraction=0.70), timeframe="1D"), alert_level=0.618)
-        self.assertIn("📊 История, 60/120", msg)
+        self.assertIn("📊 60/120", msg)
 
 
 class TestHistoryGuardAndWideStop(unittest.TestCase):
     def test_short_history_replaces_edge_line_with_warning(self):
         bundle = replace(_mk_ascending_bundle(fraction=0.70), history_bars=38)
         msg = format_message(bundle, alert_level=0.618)
-        self.assertIn("История всего 38 свечей", msg)
-        self.assertNotIn("📊 История, 60/120", msg)
+        self.assertIn("История 38 св.", msg)
+        self.assertNotIn("📊 60/120", msg)
 
     def test_enough_history_keeps_edge_line(self):
         bundle = replace(_mk_ascending_bundle(fraction=0.70), history_bars=MIN_HISTORY_BARS_FOR_EDGE)
-        self.assertIn("📊 История, 60/120", format_message(bundle, alert_level=0.618))
+        self.assertIn("📊 60/120", format_message(bundle, alert_level=0.618))
 
     def test_unknown_history_does_not_block_the_line(self):
-        self.assertIn("📊 История, 60/120", format_message(_mk_ascending_bundle(fraction=0.70), alert_level=0.618))
+        self.assertIn("📊 60/120", format_message(_mk_ascending_bundle(fraction=0.70), alert_level=0.618))
 
     def test_wide_stop_flag(self):
         plan = build_risk_plan(entry=27.58, point1=8.28, point2=61.45)  # стоп 70% цены

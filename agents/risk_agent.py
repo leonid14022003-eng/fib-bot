@@ -97,16 +97,15 @@ def build_risk_plan(
 
 
 def format_risk_line(plan: RiskPlan) -> str:
-    """Одна короткая строка для сообщения (без HTML -- см. тесты баланса тегов)."""
+    """Одна короткая строка для сообщения (без HTML -- см. тесты баланса тегов).
+    Цель (точка 2) в строке не дублируется: R:R уже её содержит (21 сентября 2026,
+    "слишком много лишней информации")."""
     size = f"{plan.position_pct:.1f}%" if plan.position_pct < 10 else f"{plan.position_pct:.0f}%"
-    line = (
-        f"📐 Стоп {plan.stop_pct:.1f}% · цель (точка 2) {plan.target_pct:.1f}% · R:R 1:{plan.rr:.1f} · "
-        f"при риске {plan.risk_per_trade_pct:g}% депозита объём ≈ {size} депозита"
-    )
+    line = f"📐 Стоп {plan.stop_pct:.1f}% · R:R 1:{plan.rr:.1f} · риск {plan.risk_per_trade_pct:g}% → позиция {size} депозита"
     if plan.needs_leverage:
         line += " (нужно плечо)"
     if plan.stop_inside_noise:
-        line += f" ⚠️ стоп {plan.stop_atr:.1f} ATR — внутри обычного дневного шума"
+        line += f" ⚠️ стоп {plan.stop_atr:.1f} ATR — в шуме"
     if plan.stop_very_wide:
-        line += " ⚠️ очень широкий стоп — масштаб месяцев/лет, не короткая сделка"
+        line += " ⚠️ очень широкий стоп"
     return line
