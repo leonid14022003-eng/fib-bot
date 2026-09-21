@@ -14,5 +14,6 @@ backup_28aug/
 # Исследование методики 21 сентября 2026 -- данные и промежуточные результаты
 # регенерируются скриптами из research/, в git не нужны
 research/research_cache/
+research/research_cache_full/
 research/*.json
 research/*.log

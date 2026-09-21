@@ -88,7 +88,7 @@ def _work(inst):
             e3 = E.outcome_e3(inst.c, s.t, s.sign, s.entry, s.risk, s.r_target)
             # контроль: случайные входы с той же геометрией
             rnd = random.Random(zlib.crc32(f"{inst.name}|{gname}|{s.t}".encode()))
-            lo, hi = E.WARMUP, inst.n - 1 - max(E.H_E1, E.H_E2) - 1
+            lo, hi = max(E.WARMUP, getattr(inst, "null_lo", 0)), inst.n - 1 - max(E.H_E1, E.H_E2) - 1
             n1 = []
             n2 = []
             n3 = []
