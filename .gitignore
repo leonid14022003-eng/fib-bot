@@ -10,3 +10,9 @@ output/mtf_state.json
 
 # Ручной снапшот от 28 августа -- не часть исходников проекта
 backup_28aug/
+
+# Исследование методики 21 сентября 2026 -- данные и промежуточные результаты
+# регенерируются скриптами из research/, в git не нужны
+research/research_cache/
+research/*.json
+research/*.log
