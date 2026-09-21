@@ -54,6 +54,7 @@ from agents.dispatch_agent import (
 from agents.fibo_agent import build_global_fibo, find_fractal_swing_extremes, find_oldest_unbroken_extremes
 from agents.intraday_agent import build_intraday_note
 from agents.price_behavior_agent import nearest_level, recent_level_events
+from agents.risk_agent import atr14
 from agents.verification_agent import cross_check_structures, format_consensus_note, run_checklist
 from recipients import ALL_RECIPIENTS
 
@@ -146,6 +147,9 @@ def scan_instrument(instrument: Instrument, fetch_fn=load_fmp_daily) -> dict:
         nearest=n,
         recent_events=events,
         checklist=report,
+        atr14=atr14(series.candles),
+        history_bars=len(series.candles),
+        asset_kind="crypto" if instrument.source == "binance" else "stock",
     )
     return {
         "instrument": instrument,

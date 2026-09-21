@@ -20,11 +20,14 @@ TELEGRAM_BOT_TOKEN приходит из переменных окружения
 from __future__ import annotations
 
 import html as _html
+import math
 import re
 from dataclasses import dataclass, field
 
+from agents.edge_stats import format_edge_line
 from agents.fibo_agent import FiboStructure
 from agents.price_behavior_agent import NearestLevelInfo, RecentEvent
+from agents.risk_agent import build_risk_plan, format_risk_line
 from agents.verification_agent import ChecklistReport
 
 # Эмодзи-иконка по направлению структуры -- используется в format_message()
@@ -44,6 +47,26 @@ def _esc(value: object) -> str:
     может сломать парсинг на стороне Telegram и алерт не дойдёт вообще
     (см. send_via_telegram про fallback на обычный текст на этот случай)."""
     return _html.escape(str(value))
+
+
+# Исследование 21 сентября 2026 (research/) считало только структуры с >= 500
+# свечей истории -- см. research_engine.WARMUP. Ниже этого порога базовые
+# частоты из agents/edge_stats.py не показываем.
+MIN_HISTORY_BARS_FOR_EDGE = 500
+
+
+def _fmt_price(x: float) -> str:
+    """Цена для сообщения. Для цен >= 1 -- как раньше, 2 знака (ничего не
+    меняется для акций/индексов). Для цен < 1 -- столько знаков, чтобы
+    осталось 4 значащие цифры: раньше 1000PEPEUSDT и другие мелкие
+    крипто-контракты печатались как "0.00" ("закрытие за 0.00" -- ориентир
+    инвалидации без единой значимой цифры), найдено 21 сентября 2026 при
+    прогоне реального пайплайна на кэше крипто-данных."""
+    a = abs(x)
+    if a >= 1 or a == 0:
+        return f"{x:.2f}"
+    decimals = min(10, max(2, 3 - math.floor(math.log10(a))))
+    return f"{x:.{decimals}f}"
 
 
 def _depth_bar(fraction: float, width: int = 12) -> str:
@@ -80,6 +103,13 @@ class AnalysisBundle:
     nearest: NearestLevelInfo
     recent_events: list[RecentEvent]
     checklist: ChecklistReport
+    # 21 сентября 2026 (риск-блок, см. agents/risk_agent.py и agents/edge_stats.py).
+    # Оба поля необязательные и стоят В КОНЦЕ -- все существующие вызовы
+    # AnalysisBundle(...) (orchestrator, mtf_screener, тесты) продолжают работать
+    # без изменений; без ATR строка риска просто не помечает "стоп внутри шума".
+    atr14: float | None = None
+    history_bars: int | None = None  # сколько свечей истории лежит под структурой; None -- неизвестно
+    asset_kind: str = "stock"  # "crypto" -- отдельный класс базовых частот (см. edge_stats.py)
 
 
 @dataclass(frozen=True)
@@ -133,6 +163,14 @@ def format_message(
     сохранена для НЕЙТРАЛЬНОЙ сводки (alert_level не задан) -- там это
     единственное место, где вообще видно положение цены.
 
+    Риск-блок (21 сентября 2026, итог исследования на ~650 инструментах, см.
+    research/): две короткие строки -- "📐" (стоп/цель/R:R/объём позиции при
+    риске 1% депозита, agents/risk_agent.py) и "📊" (как такие сигналы
+    исторически заканчивались по сравнению со случайным входом,
+    agents/edge_stats.py). Вторая строка -- только у настоящего алерта и
+    честно говорит, если сетап НЕ лучше случайного входа (продажа отскока,
+    крипта) -- сообщение не должно выглядеть увереннее, чем позволяют данные.
+
     alert_level -- если задан, это реальный триггер level-watch (не просто
     информационный дамп), заголовок оформляется как алерт ("коррекция
     дошла до X"), а не как нейтральная сводка.
@@ -168,7 +206,7 @@ def format_message(
     lines.append(f"📊 {_esc(bundle.source_tag)} · {_esc(bundle.timeframe)} · {_esc(bundle.period_desc)}")
     lines.append(
         f"{dir_emoji} {s.direction.value}, {s.scope.value}: "
-        f"<b>{s.point1.price:.2f}</b> ({s.point1.dt}) → <b>{s.point2.price:.2f}</b> ({s.point2.dt})"
+        f"<b>{_fmt_price(s.point1.price)}</b> ({s.point1.dt}) → <b>{_fmt_price(s.point2.price)}</b> ({s.point2.dt})"
     )
     # 27 августа (по отзыву "брокера", см. project doc): ориентир инвалидации
     # -- закрытие ЗА точку 1 отменяет гипотезу "коррекция исчерпалась, дальше
@@ -176,7 +214,7 @@ def format_message(
     # команда "стоп тут": бот не даёт торговых указаний, только структурный
     # ориентир. Текст короче, чем раньше, но фраза "Ориентир инвалидации" и
     # сама цена точки 1 -- намеренно на месте (см. test_format_message_shows_invalidation_price).
-    lines.append(f"⚠️ Ориентир инвалидации: закрытие за <b>{s.point1.price:.2f}</b> (точка 1)")
+    lines.append(f"⚠️ Ориентир инвалидации: закрытие за <b>{_fmt_price(s.point1.price)}</b> (точка 1)")
     lines.append(f"Глубина коррекции: <b>{frac * 100:.1f}%</b> {_depth_bar(frac)}")
     # Уровни-расширения (27 августа) -- одна строка с ближайшей ещё не
     # достигнутой целью, только когда цена реально ушла за исходный
@@ -187,20 +225,56 @@ def format_message(
     if showed_extension:
         next_target = next((lv for lv in extension_levels_sorted if lv >= frac), extension_levels_sorted[-1])
         target_price = next(lv.price for lv in s.levels if lv.level == next_target)
-        lines.append(f"🎯 Цена ушла за исходный диапазон — следующая цель {next_target:g} ({target_price:.2f})")
-    lines.append(f"💰 Текущая цена: <b>{n.current_price:.2f}</b>")
+        lines.append(f"🎯 Цена ушла за исходный диапазон — следующая цель {next_target:g} ({_fmt_price(target_price)})")
+    lines.append(f"💰 Текущая цена: <b>{_fmt_price(n.current_price)}</b>")
     if alert_level is not None:
         # Заголовок уже назвал достигнутый уровень -- не повторяем его тут
         # же другими словами, только подсказываем, что дальше (если есть
         # куда, и это ещё не показано строкой расширения выше).
-        if not showed_extension and n.above_level is not None:
-            lines.append(f"➡️ Следующий уровень: {n.above_level:g} ({n.above_price:.2f})")
+        # "Глубже" -- это БОЛЬШИЙ НОМЕР уровня, а не "выше по цене": у
+        # восходящей структуры (точка 1 = LOW) более глубокий уровень лежит
+        # НИЖЕ по цене. Раньше здесь стоял n.above_level (выше по цене) --
+        # для восходящих структур он показывал уже ПРОЙДЕННЫЙ уровень
+        # (найдено 21 сентября 2026 на реальных данных: 1810.HK, "следующий
+        # уровень 0.618" при глубине 0.637). Уровень 1.0 не показываем --
+        # это сама точка 1, она уже стоит строкой "Ориентир инвалидации".
+        if not showed_extension:
+            deeper = sorted((lv for lv in s.levels if frac + 1e-9 < lv.level < 1.0), key=lambda lv: lv.level)
+            if deeper:
+                lines.append(f"➡️ Следующий уровень: {deeper[0].level:g} ({_fmt_price(deeper[0].price)})")
     elif n.is_testing:
-        lines.append(f"🎯 Тестирует уровень {n.nearest_level:g} ({n.nearest_price:.2f})")
+        lines.append(f"🎯 Тестирует уровень {n.nearest_level:g} ({_fmt_price(n.nearest_price)})")
     else:
-        below = f"{n.below_level:g} ({n.below_price:.2f})" if n.below_level is not None else "—"
-        above = f"{n.above_level:g} ({n.above_price:.2f})" if n.above_level is not None else "—"
-        lines.append(f"Между {below} и {above}, ближе к {n.nearest_level:g} ({n.nearest_price:.2f})")
+        below = f"{n.below_level:g} ({_fmt_price(n.below_price)})" if n.below_level is not None else "—"
+        above = f"{n.above_level:g} ({_fmt_price(n.above_price)})" if n.above_level is not None else "—"
+        lines.append(f"Между {below} и {above}, ближе к {n.nearest_level:g} ({_fmt_price(n.nearest_price)})")
+    # Риск-блок (21 сентября 2026): R:R, расстояние до стопа, объём при риске
+    # 1% депозита. План строится, только когда цена между точками 1 и 2 (см.
+    # risk_agent.build_risk_plan) -- иначе строки нет, а не выдуманные числа.
+    plan = build_risk_plan(n.current_price, s.point1.price, s.point2.price, atr=bundle.atr14)
+    if plan is not None:
+        lines.append(format_risk_line(plan))
+    # Историческая калибровка ожиданий -- только для настоящего алерта (там
+    # известен уровень), не для нейтральной сводки. См. agents/edge_stats.py:
+    # цифры измерены на ~650 инструментах и сравнены со случайным входом.
+    # Базовые частоты измерены ТОЛЬКО на дневных структурах ("1D") -- для
+    # недельных/месячных/внутридневных (mtf_screener.py, intraday) они не
+    # применимы, и показывать их там было бы обманом. Риск-блок выше остаётся:
+    # это чистая геометрия, от таймфрейма не зависит.
+    if alert_level is not None and bundle.timeframe == "1D":
+        sign = 1 if s.point2.price > s.point1.price else -1
+        if bundle.history_bars is not None and bundle.history_bars < MIN_HISTORY_BARS_FOR_EDGE:
+            # Статистика измерена на структурах минимум с 500 свечами истории
+            # (~2 года) -- на короткой истории (свежее IPO) она неприменима, и
+            # показывать цифры как будто применима было бы обманом.
+            lines.append(
+                f"⚠️ История всего {bundle.history_bars} свечей — структура ненадёжна, "
+                f"базовая статистика сетапа здесь неприменима"
+            )
+        else:
+            edge_line = format_edge_line(bundle.asset_kind, sign, alert_level)
+            if edge_line:
+                lines.append(_esc(edge_line))
     if consensus_note:
         lines.append(_esc(consensus_note))
     if intraday_note:
@@ -249,26 +323,26 @@ def format_local_grid_message(symbol: str, global_grid, local, display_name: str
     lines: list[str] = [
         f"{emoji} <b>{title}</b> — Локальная сетка №{local.seq} [{local.direction.value}]: {local.state.value}",
         f"🌐 Глобальная ({global_grid.direction.value}): "
-        f"{global_grid.point1.price:.2f} ({global_grid.point1.dt}) → {global_grid.point2.price:.2f} ({global_grid.point2.dt})",
+        f"{_fmt_price(global_grid.point1.price)} ({global_grid.point1.dt}) → {_fmt_price(global_grid.point2.price)} ({global_grid.point2.dt})",
     ]
     if local.point2_final is not None:
         lines.append(
-            f"Точка 1 (100%): <b>{local.point1.price:.2f}</b> ({local.point1.kind}, {local.point1.dt}) → "
-            f"Точка 2 (0%): <b>{local.point2_final.price:.2f}</b> ({local.point2_final.kind}, {local.point2_final.dt})"
+            f"Точка 1 (100%): <b>{_fmt_price(local.point1.price)}</b> ({local.point1.kind}, {local.point1.dt}) → "
+            f"Точка 2 (0%): <b>{_fmt_price(local.point2_final.price)}</b> ({local.point2_final.kind}, {local.point2_final.dt})"
         )
         lines.append(f"Подтверждена: {local.confirmed_date}")
     else:
         p = local.point2_preliminary
         lines.append(
-            f"Точка 1 (100%): <b>{local.point1.price:.2f}</b> ({local.point1.kind}, {local.point1.dt}) → "
-            f"Точка 2 (0%, ПРЕДВАРИТЕЛЬНАЯ): <b>{p.price:.2f}</b> ({p.kind}, {p.dt})"
+            f"Точка 1 (100%): <b>{_fmt_price(local.point1.price)}</b> ({local.point1.kind}, {local.point1.dt}) → "
+            f"Точка 2 (0%, ПРЕДВАРИТЕЛЬНАЯ): <b>{_fmt_price(p.price)}</b> ({p.kind}, {p.dt})"
         )
     levels = local.levels()
     if levels:
-        level_lines = [f"{r:>5.3f} = {price:>10.2f}" for r, price in sorted(levels.items())]
+        level_lines = [f"{r:>5.3f} = {_fmt_price(price):>12}" for r, price in sorted(levels.items())]
         lines.append("<pre>" + _esc("\n".join(level_lines)) + "</pre>")
     if local.exit_date is not None:
-        lines.append(f"🚪 Выход: {local.exit_date}, через границу {local.exit_border}, цена {local.exit_price:.2f}")
+        lines.append(f"🚪 Выход: {local.exit_date}, через границу {local.exit_border}, цена {_fmt_price(local.exit_price)}")
         note = "продолжение в том же направлении (0%)" if local.exit_border == "0%" else "разворот (100%)"
         lines.append(f"<i>{note}</i>")
     return "\n".join(lines)
