@@ -7,12 +7,14 @@
 # блокирует правку crontab): 40 6 * * * bash /root/fib-bot/run_outcome_tracker.sh
 # Минута :40 не пересекается с остальными ветками (:00/:05/:10/:15/:20/:30/:45).
 #
-# Реальная отправка сообщений о развязке -- ТОЛЬКО с OUTCOME_TRACKER_SEND_REAL=1
-# (по отдельному решению Леонида). Без неё -- dry run: оценки считаются и
-# сохраняются, в Telegram ничего не уходит.
+# Реальная отправка сообщений о развязке -- OUTCOME_TRACKER_SEND_REAL=1,
+# включена 24 сентября 2026 по прямому решению Леонида ("включи отправку
+# развязок"). Без неё -- dry run: оценки считаются и сохраняются, в Telegram
+# ничего не уходит.
 set -a
 source /root/fib-bot/.env
 set +a
+export OUTCOME_TRACKER_SEND_REAL=1
 cd /root/fib-bot
 python3 outcome_tracker.py >> output/outcome_tracker_cron.log 2>&1
 RC=$?
