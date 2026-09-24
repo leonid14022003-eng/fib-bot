@@ -2,11 +2,12 @@
 __pycache__/
 *.pyc
 
-# Runtime artefacts -- регенерируются при каждом запуске, не исходники
-output/*.log
-output/screener_state.json
-output/alert_state.json
-output/mtf_state.json
+# Runtime artefacts -- всё в output/ пишется ботом при работе (память
+# level-watch, журнал сигналов, логи, последние сообщения), не исходники.
+# С 24 сентября 2026 в git не хранится ничего из output/, чтобы `git pull`
+# при деплое никогда не трогал память бота.
+output/*
+!output/.gitkeep
 
 # Ручной снапшот от 28 августа -- не часть исходников проекта
 backup_28aug/
