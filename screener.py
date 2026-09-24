@@ -53,6 +53,7 @@ from agents.dispatch_agent import (
 )
 from agents.fibo_agent import build_global_fibo, find_fractal_swing_extremes, find_oldest_unbroken_extremes
 from agents.intraday_agent import build_intraday_note
+from agents.journal_agent import record_level_alert
 from agents.price_behavior_agent import nearest_level, recent_level_events
 from agents.risk_agent import atr14
 from agents.verification_agent import cross_check_structures, format_consensus_note, run_checklist
@@ -330,6 +331,15 @@ def run_screener() -> None:
     print(f"--- Отправка текста (dry_run={result['dry_run']}) ---")
     for entry in result["sent_to"]:
         print(f"  {entry['recipient']}: {entry['status']}")
+
+    # Журнал сигналов (24 сентября 2026, agents/journal_agent.py): по записи на
+    # кандидата, message_id -- общего сообщения-шортлиста.
+    for r, new_state in candidates:
+        record_level_alert(
+            r["bundle"], new_state.last_alerted_level, "screener", result,
+            display_name=r["instrument"].label, exchange_hint=r["instrument"].exchange_hint,
+            source=r["instrument"].source, entry_date=r["candles"][-1].dt,
+        )
 
     if LIVE:
         _save_screener_state(state)

@@ -23,6 +23,7 @@ from agents.dispatch_agent import (
 )
 from agents.fibo_agent import build_global_fibo, build_local_fibo, find_fractal_swing_extremes, find_oldest_unbroken_extremes
 from agents.intraday_agent import build_intraday_note
+from agents.journal_agent import record_level_alert
 from agents.price_behavior_agent import nearest_level, recent_level_events
 from agents.verification_agent import cross_check_structures, format_consensus_note, run_checklist
 from recipients import ALL_RECIPIENTS
@@ -267,6 +268,10 @@ def run_once() -> None:
         print(f"--- Отправка текста (dry_run={result['dry_run']}) ---")
         for entry in result["sent_to"]:
             print(f"  {entry['recipient']}: {entry['status']}")
+        record_level_alert(
+            bundle, new_alert_state.last_alerted_level, "ibm_watch", result,
+            source="fmp", entry_date=series.candles[-1].dt,
+        )
 
         # Память о том, что уже отправлено, обновляем, только когда реально
         # отправили (а не в dry-run) -- иначе локальные тестовые прогоны

@@ -443,8 +443,17 @@ def send_via_telegram(
     recipients: list[Recipient],
     bot_token: str | None,
     parse_mode: str | None = "HTML",
+    reply_to_message_ids: dict[str, int] | None = None,
 ) -> dict:
     """
+    reply_to_message_ids (24 сентября 2026, журнал сигналов -- см.
+    agents/journal_agent.py): {метка получателя: message_id}. Если для
+    получателя id известен, сообщение уходит ответом на это сообщение
+    (сообщение о развязке -- ответом на исходный алерт). Если исходное
+    сообщение удалено, Telegram отправит просто так
+    (allow_sending_without_reply). Успешная отправка кладёт message_id в
+    запись получателя в sent_to -- журнал сохраняет его для таких ответов.
+
     bot_token is None -> DRY RUN (печатает, что было бы отправлено, ничего
     реально не уходит). Это режим по умолчанию везде, кроме продакшен-запуска
     (GitHub Actions / VPS), где TELEGRAM_BOT_TOKEN приходит из секретов.
@@ -476,7 +485,11 @@ def send_via_telegram(
             continue
         import requests  # локальный импорт: не нужен в dry-run/тестах, только для реальной отправки
 
-        payload = {"chat_id": r.telegram_chat_id, "text": message}
+        base = {"chat_id": r.telegram_chat_id}
+        reply_id = (reply_to_message_ids or {}).get(r.label)
+        if reply_id:
+            base["reply_parameters"] = {"message_id": reply_id, "allow_sending_without_reply": True}
+        payload = {**base, "text": message}
         if parse_mode:
             payload["parse_mode"] = parse_mode
         try:
@@ -487,11 +500,13 @@ def send_via_telegram(
             )
             data = resp.json() if resp.content else {}
             if resp.status_code == 200 and data.get("ok"):
-                result["sent_to"].append({"recipient": r.label, "status": "sent"})
+                result["sent_to"].append(
+                    {"recipient": r.label, "status": "sent", "message_id": (data.get("result") or {}).get("message_id")}
+                )
             elif parse_mode and resp.status_code == 400:
                 fallback_resp = requests.post(
                     f"https://api.telegram.org/bot{bot_token}/sendMessage",
-                    json={"chat_id": r.telegram_chat_id, "text": _strip_html(message)},
+                    json={**base, "text": _strip_html(message)},
                     timeout=15,
                 )
                 fb_data = fallback_resp.json() if fallback_resp.content else {}
@@ -500,6 +515,7 @@ def send_via_telegram(
                         {
                             "recipient": r.label,
                             "status": "sent (HTML не распарсился -- ушло обычным текстом, см. fallback)",
+                            "message_id": (fb_data.get("result") or {}).get("message_id"),
                         }
                     )
                 else:

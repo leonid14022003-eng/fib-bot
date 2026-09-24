@@ -46,6 +46,7 @@ from agents.dispatch_agent import (
     send_via_telegram,
     should_send_level_watch,
 )
+from agents.journal_agent import record_level_alert
 from agents.local_grid_agent import LocalState, run_local_grid_chain
 from data.broad_universe import provider_symbol, yahoo_mappable_instruments
 from recipients import ALL_RECIPIENTS
@@ -298,6 +299,11 @@ def run_broad_screener() -> None:
             )
             text_result = send_via_telegram(message, recipients, bot_token=bot_token)
             print(f"  [LEVEL] {instrument.label} ({instrument.symbol}): {reason}")
+            record_level_alert(
+                r["bundle"], new_level_state.last_alerted_level, "broad", text_result,
+                display_name=instrument.label, exchange_hint=instrument.exchange_hint,
+                source="yahoo", entry_date=r["candles"][-1].dt,
+            )
             delivery_failures += _report_delivery({"фото": photo_result, "текст": text_result})
 
         # --- Локальные сетки (agents/local_grid_agent.py, новый тип алерта) ---

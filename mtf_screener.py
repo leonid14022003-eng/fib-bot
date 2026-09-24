@@ -77,6 +77,7 @@ from agents.dispatch_agent import (
     send_via_telegram,
     should_send_level_watch,
 )
+from agents.journal_agent import record_level_alert
 from agents.fibo_agent import StructureScope, build_dual_direction_fibo, build_dual_direction_local_fibo
 from agents.price_behavior_agent import nearest_level, recent_level_events
 from agents.verification_agent import run_checklist
@@ -234,7 +235,7 @@ def scan_instrument_mtf(
             current_price, state, hits, updated_keys, trace,
         )
         if len(hits) > tf_hit_count_before:
-            return {"instrument": instrument, "status": "CANDIDATE", "hits": hits, "updated_keys": updated_keys, "trace": trace}
+            return {"instrument": instrument, "status": "CANDIDATE", "hits": hits, "updated_keys": updated_keys, "trace": trace, "last_daily_dt": daily_series.candles[-1].dt}
 
     if INCLUDE_INTRADAY:
         for tf_label, interval, days_back in INTRADAY_CASCADE:
@@ -264,7 +265,7 @@ def scan_instrument_mtf(
                 current_price, state, hits, updated_keys, trace,
             )
             if len(hits) > tf_hit_count_before:
-                return {"instrument": instrument, "status": "CANDIDATE", "hits": hits, "updated_keys": updated_keys, "trace": trace}
+                return {"instrument": instrument, "status": "CANDIDATE", "hits": hits, "updated_keys": updated_keys, "trace": trace, "last_daily_dt": daily_series.candles[-1].dt}
 
     # Ни один ТФ каскада не дал нового хита (hits пуст на этой строке --
     # оба цикла выше возвращаются немедленно, как только что-то находят).
@@ -317,6 +318,13 @@ def run_mtf_screener() -> None:
             print(f"    --- отправка (dry_run={send_result['dry_run']}) ---")
             for entry in send_result["sent_to"]:
                 print(f"        {entry['recipient']}: {entry['status']}")
+            # Сопровождение -- по дневным свечам FMP (структура месячная/недельная,
+            # но стоп/цель -- цены, их пересечение видно и на дневке).
+            record_level_alert(
+                bundle, new_key_state.last_alerted_level, "mtf", send_result,
+                display_name=instrument.label, exchange_hint=instrument.exchange_hint, source="fmp",
+                entry_date=result.get("last_daily_dt"),
+            )
 
     print("=" * 70)
     print(f"Итог: {'есть новые кандидаты' if any_candidate else 'новых кандидатов нет'}")
