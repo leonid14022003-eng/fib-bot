@@ -33,7 +33,7 @@ from __future__ import annotations
 import json
 import os
 import sys
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 
 from agents.chart_agent import render_chart
@@ -56,6 +56,11 @@ BROAD_SCREENER_STATE_PATH = ROOT / "output" / "broad_screener_state.json"
 BROAD_LOCAL_GRID_STATE_PATH = ROOT / "output" / "broad_local_grid_state.json"
 LIVE = os.environ.get("FIB_BOT_LIVE") == "1"
 WATCH_LEVELS = (0.618, 0.786, 1.0)  # тот же порог, что у screener.py -- не плодим разные критерии без нужды
+# Сколько прошлых глобальных сеток на символ помнит дедупликация локальных
+# сеток (см. _new_local_grid_events) -- с запасом, чтобы пережить "мигание"
+# точки 2 глобальной сетки из-за дыр в истории Yahoo.
+MAX_REMEMBERED_GLOBAL_GRIDS = 5
+_STATE_RANK = {s.value: i for i, s in enumerate(LocalState)}  # формирование < зафиксирована < завершена
 
 
 def _deduped_instruments() -> list[Instrument]:
@@ -79,6 +84,12 @@ BROAD_INSTRUMENTS: list[Instrument] = _deduped_instruments()
 class LocalGridSeenState:
     last_seq: int = 0
     last_state: str = ""
+    # "направление|дата точки 2" глобальной сетки, от которой построена
+    # цепочка. Пусто -- запись из файла памяти старого формата (до 24 сентября
+    # 2026), считается той же глобальной сеткой, что и сейчас.
+    global_key: str = ""
+    # Прошлые глобальные сетки этого символа: global_key -> [last_seq, last_state].
+    previous: dict[str, list] = field(default_factory=dict)
 
 
 def _load_json_state(path: Path) -> dict:
@@ -112,14 +123,34 @@ def _save_screener_state(state: dict[str, LevelWatchState]) -> None:
 def _load_local_grid_state() -> dict[str, LocalGridSeenState]:
     data = _load_json_state(BROAD_LOCAL_GRID_STATE_PATH)
     return {
-        symbol: LocalGridSeenState(last_seq=v.get("last_seq", 0), last_state=v.get("last_state", ""))
+        symbol: LocalGridSeenState(
+            last_seq=v.get("last_seq", 0),
+            last_state=v.get("last_state", ""),
+            global_key=v.get("global_key", ""),
+            previous=v.get("previous", {}),
+        )
         for symbol, v in data.items()
     }
 
 
 def _save_local_grid_state(state: dict[str, LocalGridSeenState]) -> None:
-    data = {symbol: {"last_seq": s.last_seq, "last_state": s.last_state} for symbol, s in state.items()}
+    data = {
+        symbol: {"last_seq": s.last_seq, "last_state": s.last_state, "global_key": s.global_key, "previous": s.previous}
+        for symbol, s in state.items()
+    }
     _save_json_state(BROAD_LOCAL_GRID_STATE_PATH, data)
+
+
+def _global_key(global_grid) -> str:
+    return f"{global_grid.direction.value}|{global_grid.point2.dt}"
+
+
+def _point2_date(global_key: str) -> str:
+    return global_key.rsplit("|", 1)[1]  # ISO-дата: строки сравниваются так же, как даты
+
+
+def _rank(seq: int, state_value: str) -> tuple[int, int]:
+    return seq, _STATE_RANK.get(state_value, -1)
 
 
 def _new_local_grid_events(symbol: str, chain, state: dict[str, LocalGridSeenState]) -> list:
@@ -128,11 +159,32 @@ def _new_local_grid_events(symbol: str, chain, state: dict[str, LocalGridSeenSta
     символа. run_local_grid_chain() каждый раз пересчитывает ВСЮ цепочку с
     нуля (без памяти между вызовами, см. agents/local_grid_agent.py) --
     "новое с прошлого прогона" здесь определяется снаружи, по (seq, state):
-    seq строго возрастает по ходу цепочки и никогда не откатывается назад
-    (Шаг 9/10 всегда увеличивает seq), а внутри одного seq состояние может
-    только прогрессировать вперёд (формирование -> зафиксирована ->
-    завершена), поэтому "последний увиденный (seq, state)" -- достаточная
-    память, без хранения полной истории.
+    seq строго возрастает по ходу цепочки (Шаг 9/10 всегда увеличивает seq),
+    а внутри одного seq состояние идёт только вперёд (формирование ->
+    зафиксирована -> завершена).
+
+    Это верно, только пока прошлые свечи не меняются -- а у Yahoo они
+    меняются. 24 сентября 2026 выяснилось: Yahoo то отдаёт, то обнуляет
+    (null OHLC) обычный торговый день -- за 22.09.2026 пустая свеча пришла у
+    89 из 233 инструментов, load_yahoo_daily() такие строки пропускает, и
+    цепочка на истории с дырой откатывается назад (INTC: №1 зафиксирована ->
+    формирование). Старая память ("последний увиденный (seq, state)",
+    перезаписывалась каждым прогоном) запоминала откат, и когда свеча
+    возвращалась, то же самое событие уходило второй раз -- так 22-24
+    сентября трём получателям пришли дубли по AMC, SOXX, SPXL, XLK, CSCO.
+
+    Поэтому память здесь -- "высшая отметка" по каждой глобальной сетке
+    (ключ -- направление + дата точки 2, от которой стартует цепочка):
+      - та же глобальная сетка -> отправляется только то, что строго выше
+        отметки; откат не отправляется и отметку не понижает;
+      - новая глобальная сетка (новый HIGH/LOW, цепочка стартует заново с
+        №1) -> прежнее правило относительно последней отметки, как было до
+        24 сентября: у бумаги, которая каждый день обновляет максимум, не
+        будет каждый день нового "№1 формирование";
+      - глобальная сетка, которая уже была недавно (точка 2 "мигает", если
+        дыра пришлась на день экстремума) -> её старая отметка, повтора нет;
+      - точка 2 уехала назад во времени (пропала свеча дня экстремума, а не
+        появился новый) -> ничего не отправляется.
 
     Если цепочка целиком обгоняет последний увиденный seq (сервис долго не
     запускался, или локальная сетка сформировалась и завершилась между двумя
@@ -145,14 +197,63 @@ def _new_local_grid_events(symbol: str, chain, state: dict[str, LocalGridSeenSta
     candidates = list(chain.completed)
     if chain.current is not None:
         candidates.append(chain.current)
-    new_events = []
-    for local in candidates:
-        if local.seq > seen.last_seq or (local.seq == seen.last_seq and local.state.value != seen.last_state):
-            new_events.append(local)
-    if candidates:
-        last = candidates[-1]
-        state[symbol] = LocalGridSeenState(last_seq=last.seq, last_state=last.state.value)
+    if not candidates:
+        return []
+
+    key = _global_key(chain.global_grid)
+    if not seen.global_key or key == seen.global_key:
+        mark = (seen.last_seq, seen.last_state)
+    else:
+        mark = tuple(seen.previous.get(key, ())) or None
+
+    last = candidates[-1]
+    new_mark = (last.seq, last.state.value)
+    if mark is not None:
+        new_events = [local for local in candidates if _rank(local.seq, local.state.value) > _rank(*mark)]
+        if _rank(*mark) > _rank(*new_mark):
+            new_mark = mark
+    elif _point2_date(key) < _point2_date(seen.global_key):
+        # Точка 2 уехала НАЗАД во времени: новый HIGH/LOW так не выглядит,
+        # это из истории пропала свеча дня экстремума -- старую цепочку
+        # заново не рассылаем.
+        new_events = []
+    else:
+        new_events = [
+            local for local in candidates
+            if local.seq > seen.last_seq or (local.seq == seen.last_seq and local.state.value != seen.last_state)
+        ]
+
+    previous = dict(seen.previous)
+    if seen.global_key and seen.global_key != key:
+        previous.pop(seen.global_key, None)
+        previous[seen.global_key] = [seen.last_seq, seen.last_state]
+    previous.pop(key, None)
+    while len(previous) > MAX_REMEMBERED_GLOBAL_GRIDS:
+        previous.pop(next(iter(previous)))
+    state[symbol] = LocalGridSeenState(
+        last_seq=new_mark[0], last_state=new_mark[1], global_key=key, previous=previous
+    )
     return new_events
+
+
+def _report_delivery(results: dict[str, dict]) -> int:
+    """
+    Статус доставки по каждому получателю -- в том же виде, что и у
+    mtf_screener.py. До 24 сентября 2026 результат send_*_via_telegram здесь
+    отбрасывался, и по логу нельзя было понять, дошёл ли алерт. `results` --
+    {"фото": результат send_photo_via_telegram, "текст": результат
+    send_via_telegram}. Возвращает число неудачных отправок.
+    """
+    failed = 0
+    by_recipient: dict[str, list[str]] = {}
+    for kind, result in results.items():
+        for entry in result["sent_to"]:
+            by_recipient.setdefault(entry["recipient"], []).append(f"{kind} {entry['status']}")
+            if not entry["status"].startswith(("sent", "SKIPPED")):
+                failed += 1
+    for recipient, statuses in by_recipient.items():
+        print(f"      {recipient}: {', '.join(statuses)}")
+    return failed
 
 
 def run_broad_screener() -> None:
@@ -169,6 +270,7 @@ def run_broad_screener() -> None:
     level_watch_count = 0
     local_grid_count = 0
     error_count = 0
+    delivery_failures = 0
 
     for instrument in BROAD_INSTRUMENTS:
         r = scan_instrument(instrument, fetch_fn=load_yahoo_daily)
@@ -189,13 +291,14 @@ def run_broad_screener() -> None:
                 alert_level=new_level_state.last_alerted_level, display_name=instrument.label,
             )
             caption = f"{instrument.label} ({instrument.symbol}) — коррекция дошла до {new_level_state.last_alerted_level:g}"
-            send_photo_via_telegram(photo_png, recipients, bot_token=bot_token, caption=caption)
+            photo_result = send_photo_via_telegram(photo_png, recipients, bot_token=bot_token, caption=caption)
             message = format_message(
                 r["bundle"], alert_level=new_level_state.last_alerted_level,
                 display_name=instrument.label, consensus_note=r["consensus_note"],
             )
-            send_via_telegram(message, recipients, bot_token=bot_token)
+            text_result = send_via_telegram(message, recipients, bot_token=bot_token)
             print(f"  [LEVEL] {instrument.label} ({instrument.symbol}): {reason}")
+            delivery_failures += _report_delivery({"фото": photo_result, "текст": text_result})
 
         # --- Локальные сетки (agents/local_grid_agent.py, новый тип алерта) ---
         try:
@@ -211,14 +314,17 @@ def run_broad_screener() -> None:
         for local in _new_local_grid_events(instrument.symbol, chain, local_grid_state):
             local_grid_count += 1
             message = format_local_grid_message(instrument.symbol, chain.global_grid, local, display_name=instrument.label)
-            send_via_telegram(message, recipients, bot_token=bot_token)
+            text_result = send_via_telegram(message, recipients, bot_token=bot_token)
             print(f"  [LOCAL_GRID] {instrument.label} ({instrument.symbol}): №{local.seq} -> {local.state.value}")
+            delivery_failures += _report_delivery({"текст": text_result})
 
     print()
     print(
         f"Итог: {len(BROAD_INSTRUMENTS) - error_count}/{len(BROAD_INSTRUMENTS)} успешно проверено, "
         f"{error_count} с ошибкой, {level_watch_count} уровневых алертов, {local_grid_count} алертов по локальным сеткам"
     )
+    if delivery_failures:
+        print(f"ВНИМАНИЕ: {delivery_failures} отправок в Telegram не дошли -- статусы по получателям выше")
 
     if LIVE:
         _save_screener_state(screener_state)
